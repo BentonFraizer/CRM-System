@@ -74,7 +74,17 @@ onMounted(() => {
       </div>
       <button @click="addTask">Add</button>
     </div>
-    <div class="tabs"></div>
+    <ul class="tabs">
+      <li class="active" value="all">
+        Все <span>{{ tasksInfo.info?.all }}</span>
+      </li>
+      <li value="inWork">
+        В работе <span>{{ tasksInfo.info?.inWork }}</span>
+      </li>
+      <li value="completed">
+        Сделано <span>{{ tasksInfo.info?.completed }}</span>
+      </li>
+    </ul>
     <div v-if="isLoading">Loading...</div>
     <ul v-else class="tasks-list">
       <li v-for="task in tasksInfo.data" :key="task.id">{{ task.title }}</li>
@@ -85,6 +95,14 @@ onMounted(() => {
 <style scoped>
 body {
   padding: 0;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  list-style-type: none;
 }
 
 .container {
@@ -113,6 +131,11 @@ body {
     border-radius: 5px;
     color: white;
     padding: 5px 30px;
+    font-size: 20px;
+  }
+
+  & button:hover {
+    background-color: #4c86e8;
   }
 }
 
@@ -130,12 +153,31 @@ body {
   }
 }
 
-/* Компонент задачи */
-.tasks-list {
-  padding: 0;
+/* Компонент табов/вкладок */
+.tabs {
+  display: flex;
+  gap: 10px;
 
   & li {
-    list-style-type: none;
+    background-color: lightgray;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    opacity: 0.7;
+  }
+
+  & li span {
+    font-weight: bold;
+  }
+
+  & li:hover {
+    background-color: #b7b7b7;
+  }
+
+  & li.active {
+    opacity: 1;
+    background-color: #727272;
+    color: white;
   }
 }
 </style>
