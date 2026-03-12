@@ -99,6 +99,25 @@ const saveEditTask = async (taskData) => {
   }
 }
 
+const deleteTask = async (taskId) => {
+  try {
+    isLoading.value = true
+    const response = await fetch(`https://easydev.club/api/v1/todos/${taskId}`, {
+      method: 'DELETE',
+      headers: {
+        accept: 'application/json',
+      },
+    })
+    if (response.ok) {
+      await getTasks()
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
 // TODO: при разделении на компоненты скорее всего обработчик необходимо будет переименовать в onEditButtonClick (если он будет передаваться в компонент задачи)
 const handleEditButtonClick = (taskData) => {
   editableTaskId.value = taskData.id
@@ -156,7 +175,7 @@ onMounted(() => {
           </div>
           <div class="tasks-list__right">
             <button class="icon icon--edit" type="button" @click="handleEditButtonClick(task)" />
-            <button class="icon icon--trash" type="button" />
+            <button class="icon icon--trash" type="button" @click="deleteTask(task.id)" />
           </div>
         </template>
       </li>
