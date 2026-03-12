@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-
-const MIN_TITLE_LENGTH = 2
-const MAX_TITLE_LENGTH = 64
+import { validateTaskTitle } from '@/helpers/helpers'
 
 const tasksInfo = ref({
   data: [],
@@ -13,6 +11,10 @@ const isLoading = ref(false)
 
 const newTaskTitle = ref('')
 const errorMessage = ref('')
+
+const editableTaskId = ref(null)
+const editableTaskTitle = ref(null)
+const editableTaskErrorMessage = ref(null)
 
 const getTasks = async () => {
   isLoading.value = true
@@ -30,12 +32,10 @@ const getTasks = async () => {
 }
 
 const addTask = async () => {
-  if (newTaskTitle.value.length < MIN_TITLE_LENGTH) {
-    errorMessage.value = 'Минимум 2 символа'
-  } else if (newTaskTitle.value.length > MAX_TITLE_LENGTH) {
-    errorMessage.value = 'Максимум 64 символа'
-  } else {
-    errorMessage.value = ''
+  errorMessage.value = validateTaskTitle(newTaskTitle.value)
+  const isTitleValid = !errorMessage.value.length
+
+  if (isTitleValid) {
     const newTaskData = {
       isDone: false,
       title: newTaskTitle.value,
@@ -58,6 +58,57 @@ const addTask = async () => {
       newTaskTitle.value = ''
     }
   }
+}
+
+const saveEditTask = async (taskData) => {
+  // Выход из режима редактирования если в заголовок задачи не было внесено изменений
+  if (editableTaskTitle.value === taskData.title) {
+    editableTaskId.value = null
+    editableTaskTitle.value = null
+    return
+  }
+
+  editableTaskErrorMessage.value = validateTaskTitle(editableTaskTitle.value)
+  const isTitleValid = !editableTaskErrorMessage.value?.length
+
+  if (isTitleValid) {
+    const taskDataToSend = {
+      isDone: taskData.isDone,
+      title: editableTaskTitle.value,
+    }
+    try {
+      isLoading.value = true
+      const response = await fetch(`https://easydev.club/api/v1/todos/${taskData.id}`, {
+        method: 'PUT',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify(taskDataToSend),
+      })
+      if (response.ok) {
+        await getTasks()
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      isLoading.value = false
+      editableTaskId.value = null
+      editableTaskTitle.value = null
+    }
+  }
+}
+
+// TODO: при разделении на компоненты скорее всего обработчик необходимо будет переименовать в onEditButtonClick (если он будет передаваться в компонент задачи)
+const handleEditButtonClick = (taskData) => {
+  editableTaskId.value = taskData.id
+  editableTaskTitle.value = taskData.title
+}
+
+const handleCancelEditButtonClick = () => {
+  editableTaskId.value = null
+  editableTaskTitle.value = null
+  editableTaskErrorMessage.value = null
 }
 
 onMounted(() => {
@@ -87,7 +138,28 @@ onMounted(() => {
     </ul>
     <div v-if="isLoading">Loading...</div>
     <ul v-else class="tasks-list">
-      <li v-for="task in tasksInfo.data" :key="task.id">{{ task.title }}</li>
+      <li v-for="task in tasksInfo.data" :key="task.id" class="task">
+        <template v-if="editableTaskId === task.id">
+          <div class="tasks-list__edit-left">
+            <input type="text" v-model="editableTaskTitle" />
+            <span class="error-message">{{ editableTaskErrorMessage }}</span>
+          </div>
+          <div class="tasks-list__right">
+            <button class="icon icon--check" type="button" @click="saveEditTask(task)" />
+            <button class="icon icon--close" type="button" @click="handleCancelEditButtonClick" />
+          </div>
+        </template>
+        <template v-else>
+          <div class="tasks-list__left">
+            <input type="checkbox" />
+            {{ task.title }}
+          </div>
+          <div class="tasks-list__right">
+            <button class="icon icon--edit" type="button" @click="handleEditButtonClick(task)" />
+            <button class="icon icon--trash" type="button" />
+          </div>
+        </template>
+      </li>
     </ul>
   </div>
 </template>
@@ -106,15 +178,21 @@ li {
 }
 
 .container {
-  height: 100vh;
+  width: 450px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 2px solid #5393ff;
+  border-radius: 30px;
+  padding: 30px;
+  background-color: #efefef;
 }
 
 /* Добавление задачи */
 .add-task {
+  width: 100%;
   display: flex;
   gap: 10px;
 
@@ -128,7 +206,7 @@ li {
     cursor: pointer;
     background-color: #5393ff;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     color: white;
     padding: 5px 30px;
     font-size: 20px;
@@ -140,17 +218,16 @@ li {
 }
 
 .input-wrapper {
-  width: 250px;
-  max-width: 300px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
 
-  & .error-message {
-    color: red;
-    font-size: 12px;
-    height: 14px;
-  }
+.error-message {
+  color: red;
+  font-size: 14px;
+  height: 16px;
 }
 
 /* Компонент табов/вкладок */
@@ -179,5 +256,72 @@ li {
     background-color: #727272;
     color: white;
   }
+}
+
+/* Список задач */
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 450px;
+  height: 40px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.tasks-list__edit-left {
+  display: flex;
+  flex-direction: column;
+
+  & input {
+    width: 270px;
+  }
+}
+
+.tasks-list__right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.icon {
+  display: block;
+
+  margin: 0;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+
+  cursor: pointer;
+
+  border: none;
+  background-color: transparent;
+  background-size: cover;
+}
+
+.icon--edit {
+  background-image: url('@/assets/img/icon-pencil.svg');
+}
+
+.icon--trash {
+  width: 16px;
+  background-image: url('@/assets/img/icon-trash.svg');
+}
+
+.icon--check {
+  background-image: url('@/assets/img/icon-check.svg');
+}
+
+.icon--close {
+  height: 24px;
+  width: 24px;
+  background-image: url('@/assets/img/icon-close.svg');
 }
 </style>
