@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { validateTaskTitle } from '@/helpers/helpers'
+import { validateTaskTitle, TABS } from '@/helpers/helpers'
 
 const tasksInfo = ref({
   data: [],
@@ -16,10 +16,12 @@ const editableTaskId = ref(null)
 const editableTaskTitle = ref(null)
 const editableTaskErrorMessage = ref(null)
 
-const getTasks = async () => {
+const activeTab = ref(TABS.all.status)
+
+const getTasks = async (status = TABS.all.status) => {
   isLoading.value = true
   try {
-    const response = await fetch('https://easydev.club/api/v1/todos')
+    const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`)
     if (response.ok) {
       tasksInfo.value = await response.json()
       tasksInfo.value = { ...tasksInfo.value, data: tasksInfo.value.data.reverse() }
@@ -50,7 +52,7 @@ const addTask = async () => {
         body: JSON.stringify(newTaskData),
       })
       if (response.ok) {
-        await getTasks()
+        await getTasks(activeTab.value)
       }
     } catch (error) {
       console.error(error)
@@ -87,7 +89,7 @@ const saveEditTask = async (taskData) => {
         body: JSON.stringify(taskDataToSend),
       })
       if (response.ok) {
-        await getTasks()
+        await getTasks(activeTab.value)
       }
     } catch (error) {
       console.error(error)
@@ -109,7 +111,32 @@ const deleteTask = async (taskId) => {
       },
     })
     if (response.ok) {
-      await getTasks()
+      await getTasks(activeTab.value)
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const toggleIsDoneTask = async (taskData) => {
+  const taskDataToSend = {
+    isDone: !taskData.isDone,
+    title: taskData.title,
+  }
+  try {
+    isLoading.value = true
+    const response = await fetch(`https://easydev.club/api/v1/todos/${taskData.id}`, {
+      method: 'PUT',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+      body: JSON.stringify(taskDataToSend),
+    })
+    if (response.ok) {
+      await getTasks(activeTab.value)
     }
   } catch (error) {
     console.error(error)
@@ -130,6 +157,11 @@ const handleCancelEditButtonClick = () => {
   editableTaskErrorMessage.value = null
 }
 
+const handleTabClick = (key) => {
+  activeTab.value = key
+  getTasks(key)
+}
+
 onMounted(() => {
   getTasks()
 })
@@ -142,21 +174,21 @@ onMounted(() => {
         <input type="text" placeholder="Task To Be Done" v-model.trim="newTaskTitle" />
         <span class="error-message">{{ errorMessage }}</span>
       </div>
-      <button @click="addTask">Add</button>
+      <button @click="addTask">Создать</button>
     </div>
     <ul class="tabs">
-      <li class="active" value="all">
-        Все <span>{{ tasksInfo.info?.all }}</span>
-      </li>
-      <li value="inWork">
-        В работе <span>{{ tasksInfo.info?.inWork }}</span>
-      </li>
-      <li value="completed">
-        Сделано <span>{{ tasksInfo.info?.completed }}</span>
+      <li
+        v-for="(value, key) in tasksInfo.info"
+        :key="TABS[key].status"
+        :value="key"
+        @click="handleTabClick(key)"
+        :class="{ active: activeTab === TABS[key].status }"
+      >
+        {{ TABS[key].title }} <span>{{ value }}</span>
       </li>
     </ul>
     <div v-if="isLoading">Loading...</div>
-    <ul v-else class="tasks-list">
+    <ul v-else-if="tasksInfo.data.length > 0" class="tasks-list">
       <li v-for="task in tasksInfo.data" :key="task.id" class="task">
         <template v-if="editableTaskId === task.id">
           <div class="tasks-list__edit-left">
@@ -168,10 +200,11 @@ onMounted(() => {
             <button class="icon icon--close" type="button" @click="handleCancelEditButtonClick" />
           </div>
         </template>
+
         <template v-else>
           <div class="tasks-list__left">
-            <input type="checkbox" />
-            {{ task.title }}
+            <input type="checkbox" @change="toggleIsDoneTask(task)" />
+            <span :class="{ 'is-done': task.isDone }">{{ task.title }}</span>
           </div>
           <div class="tasks-list__right">
             <button class="icon icon--edit" type="button" @click="handleEditButtonClick(task)" />
@@ -180,6 +213,7 @@ onMounted(() => {
         </template>
       </li>
     </ul>
+    <div v-else>Список пуст</div>
   </div>
 </template>
 
@@ -308,6 +342,19 @@ li {
   display: flex;
   align-items: center;
   gap: 15px;
+}
+
+.tasks-list__left {
+  display: flex;
+
+  input {
+    margin-right: 10px;
+  }
+
+  & .is-done {
+    text-decoration: line-through;
+    color: gray;
+  }
 }
 
 .icon {

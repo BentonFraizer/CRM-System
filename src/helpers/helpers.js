@@ -12,3 +12,18 @@ export const validateTaskTitle = (title) => {
 
   return errorMessage
 }
+
+export const TABS = {
+  all: {
+    status: 'all',
+    title: 'Все',
+  },
+  inWork: {
+    status: 'inWork',
+    title: 'В работе',
+  },
+  completed: {
+    status: 'completed',
+    title: 'Завершенные',
+  },
+}
