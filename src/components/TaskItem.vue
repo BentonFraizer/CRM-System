@@ -1,87 +1,44 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { validateTaskTitle } from '@/helpers/helpers'
+import { updateTask, deleteTask } from '@/api/tasksApi'
 
 const { tasksData } = defineProps(['tasksData'])
 const emit = defineEmits(['updateTasks'])
 
 const editableTaskId = ref(null)
-const editableTaskTitle = ref(null)
-const editableTaskErrorMessage = ref(null)
+const editableTaskTitle = ref('')
+const editableTaskErrorMessage = ref('')
 
-const saveEditTask = async (taskData) => {
+const handleUpdateTask = async (taskData, isToggleCheckbox = false) => {
   // Выход из режима редактирования если в заголовок задачи не было внесено изменений
-  if (editableTaskTitle.value === taskData.title) {
+  if (editableTaskTitle.value === taskData.title && !isToggleCheckbox) {
     editableTaskId.value = null
-    editableTaskTitle.value = null
+    editableTaskTitle.value = ''
     return
   }
 
   editableTaskErrorMessage.value = validateTaskTitle(editableTaskTitle.value)
   const isTitleValid = !editableTaskErrorMessage.value?.length
 
-  if (isTitleValid) {
+  if (isTitleValid || isToggleCheckbox) {
     const taskDataToSend = {
-      isDone: taskData.isDone,
+      id: taskData.id,
+      isDone: isToggleCheckbox ? !taskData.isDone : taskData.isDone,
       title: editableTaskTitle.value,
     }
-    try {
-      const response = await fetch(`https://easydev.club/api/v1/todos/${taskData.id}`, {
-        method: 'PUT',
-        headers: {
-          accept: 'application/json',
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify(taskDataToSend),
-      })
-      if (response.ok) {
-        emit('updateTasks')
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      editableTaskId.value = null
-      editableTaskTitle.value = null
-    }
+
+    await updateTask(taskDataToSend)
+
+    editableTaskId.value = null
+    editableTaskTitle.value = ''
+    emit('updateTasks')
   }
 }
 
-const deleteTask = async (taskId) => {
-  try {
-    const response = await fetch(`https://easydev.club/api/v1/todos/${taskId}`, {
-      method: 'DELETE',
-      headers: {
-        accept: 'application/json',
-      },
-    })
-    if (response.ok) {
-      emit('updateTasks')
-    }
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-const toggleIsDoneTask = async (taskData) => {
-  const taskDataToSend = {
-    isDone: !taskData.isDone,
-    title: taskData.title,
-  }
-  try {
-    const response = await fetch(`https://easydev.club/api/v1/todos/${taskData.id}`, {
-      method: 'PUT',
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-      body: JSON.stringify(taskDataToSend),
-    })
-    if (response.ok) {
-      emit('updateTasks')
-    }
-  } catch (error) {
-    console.error(error)
-  }
+const handleDeleteTask = async (id) => {
+  await deleteTask(id)
+  emit('updateTasks')
 }
 
 const handleEditButtonClick = (taskData) => {
@@ -91,8 +48,8 @@ const handleEditButtonClick = (taskData) => {
 
 const handleCancelEditButtonClick = () => {
   editableTaskId.value = null
-  editableTaskTitle.value = null
-  editableTaskErrorMessage.value = null
+  editableTaskTitle.value = ''
+  editableTaskErrorMessage.value = ''
 }
 </script>
 
@@ -100,23 +57,23 @@ const handleCancelEditButtonClick = () => {
   <li v-for="task in tasksData" :key="task.id" class="task">
     <template v-if="editableTaskId === task.id">
       <div class="tasks-list__edit-left">
-        <input type="text" v-model="editableTaskTitle" />
+        <input type="text" v-model.trim="editableTaskTitle" />
         <span class="error-message">{{ editableTaskErrorMessage }}</span>
       </div>
       <div class="tasks-list__right">
-        <button class="icon icon--check" type="button" @click="saveEditTask(task)" />
+        <button class="icon icon--check" type="button" @click="handleUpdateTask(task)" />
         <button class="icon icon--close" type="button" @click="handleCancelEditButtonClick" />
       </div>
     </template>
 
     <template v-else>
       <div class="tasks-list__left">
-        <input type="checkbox" @change="toggleIsDoneTask(task)" />
+        <input type="checkbox" :checked="task.isDone" @change="handleUpdateTask(task, true)" />
         <span :class="{ 'is-done': task.isDone }">{{ task.title }}</span>
       </div>
       <div class="tasks-list__right">
         <button class="icon icon--edit" type="button" @click="handleEditButtonClick(task)" />
-        <button class="icon icon--trash" type="button" @click="deleteTask(task.id)" />
+        <button class="icon icon--trash" type="button" @click="handleDeleteTask(task.id)" />
       </div>
     </template>
   </li>

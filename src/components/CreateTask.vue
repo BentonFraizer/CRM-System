@@ -1,38 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { validateTaskTitle } from '@/helpers/helpers'
+import { createTask } from '@/api/tasksApi.js'
+import { validateTaskTitle } from '@/helpers/helpers.js'
 
 const emit = defineEmits(['updateTasks'])
 
 const newTaskTitle = ref('')
 const errorMessage = ref('')
 
-const addTask = async () => {
+const handleAddTask = async () => {
   errorMessage.value = validateTaskTitle(newTaskTitle.value)
   const isTitleValid = !errorMessage.value.length
-
   if (isTitleValid) {
     const newTaskData = {
       isDone: false,
       title: newTaskTitle.value,
     }
-    try {
-      const response = await fetch('https://easydev.club/api/v1/todos', {
-        method: 'POST',
-        headers: {
-          accept: 'application/json',
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify(newTaskData),
-      })
-      if (response.ok) {
-        emit('updateTasks')
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      newTaskTitle.value = ''
-    }
+    await createTask(newTaskData)
+    newTaskTitle.value = ''
+    emit('updateTasks')
   }
 }
 </script>
@@ -43,7 +29,7 @@ const addTask = async () => {
       <input type="text" placeholder="Task To Be Done" v-model.trim="newTaskTitle" />
       <span class="error-message">{{ errorMessage }}</span>
     </div>
-    <button @click="addTask">Создать</button>
+    <button @click="handleAddTask">Создать</button>
   </div>
 </template>
 
