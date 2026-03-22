@@ -96,7 +96,7 @@ const handleCancelEditButtonClick = () => {
   justify-content: space-between;
   width: 450px;
   height: 40px;
-  background-color: white;
+  background-color: var(--primary-bg-color);
   border-radius: 10px;
   padding: 10px;
 
@@ -131,7 +131,7 @@ const handleCancelEditButtonClick = () => {
 
   & .is-done {
     text-decoration: line-through;
-    color: gray;
+    color: var(--secondary-color);
   }
 }
 
@@ -151,26 +151,34 @@ const handleCancelEditButtonClick = () => {
 }
 
 .icon--edit {
-  background-image: url('@/assets/img/icon-pencil.svg');
+  background-color: var(--primary-btn-bg-color);
+  mask: url('@/assets/icons/icon-pencil.svg') no-repeat center;
+  mask-size: contain;
 }
 
 .icon--trash {
   width: 16px;
-  background-image: url('@/assets/img/icon-trash.svg');
+  background-color: var(--danger-btn-bg-color);
+  mask: url('@/assets/icons/icon-trash.svg') no-repeat center;
+  mask-size: contain;
 }
 
 .icon--check {
-  background-image: url('@/assets/img/icon-check.svg');
+  background-color: var(--success-btn-bg-color);
+  mask: url('@/assets/icons/icon-check.svg') no-repeat center;
+  mask-size: contain;
 }
 
 .icon--close {
   height: 24px;
   width: 24px;
-  background-image: url('@/assets/img/icon-close.svg');
+  background-color: var(--danger-btn-bg-color);
+  mask: url('@/assets/icons/icon-close.svg') no-repeat center;
+  mask-size: contain;
 }
 
 .error-message {
-  color: red;
+  color: var(--error-color);
   font-size: 14px;
   height: 16px;
 }

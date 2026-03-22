@@ -50,21 +50,21 @@ const handleAddTask = async () => {
   & input {
     padding: 10px 5px;
     border: 0;
-    border-bottom: 2px solid gray;
+    border-bottom: 2px solid var(--secondary-color);
   }
 
   & button {
     cursor: pointer;
-    background-color: #5393ff;
+    background-color: var(--primary-btn-bg-color);
     border: none;
     border-radius: 10px;
-    color: white;
+    color: var(--primary-color);
     padding: 5px 30px;
     font-size: 20px;
   }
 
   & button:hover {
-    background-color: #4c86e8;
+    background-color: var(--on-primary-tab-bg-color);
   }
 }
 
@@ -76,7 +76,7 @@ const handleAddTask = async () => {
 }
 
 .error-message {
-  color: red;
+  color: var(--error-color);
   font-size: 14px;
   height: 16px;
 }

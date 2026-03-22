@@ -33,7 +33,7 @@ li {
   gap: 10px;
 
   & li {
-    background-color: lightgray;
+    background-color: var(--primary-tab-bg-color);
     cursor: pointer;
     padding: 5px 10px;
     border-radius: 5px;
@@ -45,13 +45,13 @@ li {
   }
 
   & li:hover {
-    background-color: #b7b7b7;
+    background-color: var(--on-primary-tab-bg-color);
   }
 
   & li.active {
     opacity: 1;
-    background-color: #727272;
-    color: white;
+    background-color: var(--active-tab-bg-color);
+    color: var(--primary-color);
   }
 }
 </style>

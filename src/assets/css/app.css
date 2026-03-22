@@ -1,3 +1,21 @@
+:root {
+  --primary-bg-color: #FFFFFF;
+  --secondary-bg-color: #EFEFEF;
+
+  --primary-color: #FFFFFF;
+  --secondary-color: #808080;
+  --error-color: #FF0000;
+
+  --primary-tab-bg-color: #D3D3D3;
+  --on-primary-tab-bg-color: #B7B7B7;
+  --active-tab-bg-color: #727272;
+
+  --primary-btn-bg-color: #5393FF;
+  --on-primary-btn-bg-color: #4C86E8;
+  --danger-btn-bg-color: #FF0000;
+  --success-btn-bg-color: #22BB33;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;

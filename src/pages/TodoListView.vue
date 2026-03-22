@@ -55,10 +55,6 @@ onMounted(async () => {
 
 <template>
   <div class="container">
-    <!--  На будущие задачи  -->
-    <!--    <nav>-->
-    <!--      <RouterLink to="/test">Go to test page</RouterLink>-->
-    <!--    </nav>-->
     <CreateTask @task-created="onUpdateTasks" />
 
     <TasksTabs @tab-clicked="onTabClick" :tabs-data="tasksInfo.info" :active-tab="activeTab" />
@@ -95,17 +91,8 @@ li {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 2px solid #5393ff;
   border-radius: 30px;
   padding: 30px;
-  background-color: #efefef;
+  background-color: var(--secondary-bg-color);
 }
-
-/*
-nav {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
- */
 </style>
