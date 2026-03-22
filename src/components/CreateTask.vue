@@ -12,13 +12,20 @@ const handleAddTask = async () => {
   errorMessage.value = validateTaskTitle(newTaskTitle.value)
   const isTitleValid = !errorMessage.value.length
   if (isTitleValid) {
-    const newTaskData = {
-      isDone: false,
-      title: newTaskTitle.value,
+    try {
+      const newTaskData = {
+        isDone: false,
+        title: newTaskTitle.value,
+      }
+
+      await createTask(newTaskData)
+      
+      newTaskTitle.value = ''
+      emit('updateTasks')
+    } catch (error) {
+      console.error(error)
+      alert('Не удалось создать задачу')
     }
-    await createTask(newTaskData)
-    newTaskTitle.value = ''
-    emit('updateTasks')
   }
 }
 </script>

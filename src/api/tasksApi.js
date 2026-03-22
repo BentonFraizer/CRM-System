@@ -7,7 +7,7 @@ export const getTasks = async (status = TABS.all.status) => {
       return await response.json()
     }
   } catch (error) {
-    console.error(error)
+    throw error
   }
 }
 
@@ -22,7 +22,7 @@ export const createTask = async (newTaskData) => {
       body: JSON.stringify(newTaskData),
     })
   } catch (error) {
-    console.error(error)
+    throw error
   }
 }
 
@@ -38,7 +38,7 @@ export const updateTask = async (taskDataToSend) => {
       body: JSON.stringify({ title, isDone }),
     })
   } catch (error) {
-    console.error(error)
+    throw error
   }
 }
 
@@ -51,6 +51,6 @@ export const deleteTask = async (id) => {
       },
     })
   } catch (error) {
-    console.error(error)
+    throw error
   }
 }

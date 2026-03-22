@@ -22,23 +22,33 @@ const handleUpdateTask = async (taskData, isToggleCheckbox = false) => {
   const isTitleValid = !editableTaskErrorMessage.value?.length
 
   if (isTitleValid || isToggleCheckbox) {
-    const taskDataToSend = {
-      id: taskData.id,
-      isDone: isToggleCheckbox ? !taskData.isDone : taskData.isDone,
-      title: editableTaskTitle.value,
+    try {
+      const taskDataToSend = {
+        id: taskData.id,
+        isDone: isToggleCheckbox ? !taskData.isDone : taskData.isDone,
+        title: editableTaskTitle.value,
+      }
+
+      await updateTask(taskDataToSend)
+
+      editableTaskId.value = null
+      editableTaskTitle.value = ''
+      emit('updateTasks')
+    } catch (error) {
+      console.error(error)
+      alert('Не удалось обновить задачу')
     }
-
-    await updateTask(taskDataToSend)
-
-    editableTaskId.value = null
-    editableTaskTitle.value = ''
-    emit('updateTasks')
   }
 }
 
 const handleDeleteTask = async (id) => {
-  await deleteTask(id)
-  emit('updateTasks')
+  try {
+    await deleteTask(id)
+    emit('updateTasks')
+  } catch (error) {
+    console.error(error)
+    alert('Не удалось удалить задачу')
+  }
 }
 
 const handleEditButtonClick = (taskData) => {

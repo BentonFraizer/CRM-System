@@ -17,21 +17,39 @@ const activeTab = ref(TABS.all.status)
 
 const onTabClick = async (key) => {
   activeTab.value = key
-  isLoading.value = true
-  tasksInfo.value = await getTasks(key)
-  isLoading.value = false
+  try {
+    isLoading.value = true
+    tasksInfo.value = await getTasks(key)
+  } catch (error) {
+    console.error(error)
+    alert('Не удалось загрузить список задач для вкладки')
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const updateTasks = async () => {
-  isLoading.value = true
-  tasksInfo.value = await getTasks(activeTab.value)
-  isLoading.value = false
+  try {
+    isLoading.value = true
+    tasksInfo.value = await getTasks(activeTab.value)
+  } catch (error) {
+    console.error(error)
+    alert('Не удалось обновить список задач')
+  } finally {
+    isLoading.value = false
+  }
 }
 
 onMounted(async () => {
-  isLoading.value = true
-  tasksInfo.value = await getTasks()
-  isLoading.value = false
+  try {
+    isLoading.value = true
+    tasksInfo.value = await getTasks()
+  } catch (error) {
+    console.error(error)
+    alert('Не удалось загрузить список задач')
+  } finally {
+    isLoading.value = false
+  }
 })
 </script>
 
