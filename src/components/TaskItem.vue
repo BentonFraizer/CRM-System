@@ -65,16 +65,16 @@ const handleCancelEditButtonClick = () => {
 
 <template>
   <li v-for="task in tasksData" :key="task.id" class="task">
-    <template v-if="editableTaskId === task.id">
+    <form @submit.prevent="handleUpdateTask(task)" v-if="editableTaskId === task.id">
       <div class="tasks-list__edit-left">
         <input type="text" v-model.trim="editableTaskTitle" />
         <span class="error-message">{{ editableTaskErrorMessage }}</span>
       </div>
       <div class="tasks-list__right">
-        <button class="icon icon--check" type="button" @click="handleUpdateTask(task)" />
+        <button class="icon icon--check" type="submit" />
         <button class="icon icon--close" type="button" @click="handleCancelEditButtonClick" />
       </div>
-    </template>
+    </form>
 
     <template v-else>
       <div class="tasks-list__left">
@@ -99,6 +99,12 @@ const handleCancelEditButtonClick = () => {
   background-color: white;
   border-radius: 10px;
   padding: 10px;
+
+  & form {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 .tasks-list__edit-left {

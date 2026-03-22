@@ -31,13 +31,13 @@ const handleAddTask = async () => {
 </script>
 
 <template>
-  <div class="add-task">
+  <form @submit.prevent="handleAddTask" class="add-task">
     <div class="input-wrapper">
       <input type="text" placeholder="Task To Be Done" v-model.trim="newTaskTitle" />
       <span class="error-message">{{ errorMessage }}</span>
     </div>
-    <button @click="handleAddTask">Создать</button>
-  </div>
+    <button type="submit">Создать</button>
+  </form>
 </template>
 
 <style scoped>
