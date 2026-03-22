@@ -78,8 +78,16 @@ const handleCancelEditButtonClick = () => {
 
     <template v-else>
       <div class="tasks-list__left">
-        <input type="checkbox" :checked="task.isDone" @change="handleUpdateTask(task, true)" />
-        <span :class="{ 'is-done': task.isDone }">{{ task.title }}</span>
+        <input
+          type="checkbox"
+          class="checkbox-input"
+          :checked="task.isDone"
+          @change="handleUpdateTask(task, true)"
+          :id="task.id"
+        />
+        <label :for="task.id" :class="{ 'is-done': task.isDone }">
+          {{ task.title }}
+        </label>
       </div>
       <div class="tasks-list__right">
         <button class="icon icon--edit" type="button" @click="handleEditButtonClick(task)" />
@@ -124,6 +132,7 @@ const handleCancelEditButtonClick = () => {
 
 .tasks-list__left {
   display: flex;
+  align-items: center;
 
   input {
     margin-right: 10px;
@@ -133,6 +142,37 @@ const handleCancelEditButtonClick = () => {
     text-decoration: line-through;
     color: var(--secondary-color);
   }
+}
+
+/* Кастомизация чекбокса */
+.checkbox-input {
+  appearance: none;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  background: var(--primary-bg-color);
+  border: 2px solid var(--secondary-bg-color);
+  border-radius: 50%;
+}
+
+.checkbox-input::after {
+  content: '';
+  background: var(--primary-btn-bg-color);
+  color: var(--primary-bg-color);
+  background-image: url('@/assets/icons/icon-white-check-mark.svg');
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 0;
+  height: 0;
+  font-size: 18px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.checkbox-input:checked::after {
+  width: 20px;
+  height: 20px;
 }
 
 .icon {
