@@ -4,8 +4,7 @@ export const getTasks = async (status = TABS.all.status) => {
   try {
     const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`)
     if (response.ok) {
-      const tasksInfo = await response.json()
-      return { ...tasksInfo, data: tasksInfo.data.reverse() }
+      return await response.json()
     }
   } catch (error) {
     console.error(error)
