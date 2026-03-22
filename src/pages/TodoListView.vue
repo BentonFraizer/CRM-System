@@ -15,11 +15,11 @@ const tasksInfo = ref({
 const isLoading = ref(false)
 const activeTab = ref(TABS.all.status)
 
-const onTabClick = async (key) => {
-  activeTab.value = key
+const onTabClick = async (status) => {
+  activeTab.value = status
   try {
     isLoading.value = true
-    tasksInfo.value = await getTasks(key)
+    tasksInfo.value = await getTasks(status)
   } catch (error) {
     console.error(error)
     alert('Не удалось загрузить список задач для вкладки')
@@ -28,7 +28,7 @@ const onTabClick = async (key) => {
   }
 }
 
-const updateTasks = async () => {
+const onUpdateTasks = async () => {
   try {
     isLoading.value = true
     tasksInfo.value = await getTasks(activeTab.value)
@@ -59,16 +59,16 @@ onMounted(async () => {
     <!--    <nav>-->
     <!--      <RouterLink to="/test">Go to test page</RouterLink>-->
     <!--    </nav>-->
-    <CreateTask @update-tasks="updateTasks" />
+    <CreateTask @task-created="onUpdateTasks" />
 
-    <TasksTabs @on-tab-click="onTabClick" :tabs-data="tasksInfo.info" :active-tab="activeTab" />
+    <TasksTabs @tab-clicked="onTabClick" :tabs-data="tasksInfo.info" :active-tab="activeTab" />
 
     <div v-if="isLoading">Loading...</div>
 
     <TasksList
       v-else-if="tasksInfo.data.length > 0"
       :tasks-data="tasksInfo.data"
-      @update-tasks="updateTasks"
+      @task-updated="onUpdateTasks"
     />
 
     <div v-else>Список пуст</div>

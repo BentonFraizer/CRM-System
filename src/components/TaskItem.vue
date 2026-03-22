@@ -4,7 +4,7 @@ import { validateTaskTitle } from '@/helpers/helpers'
 import { updateTask, deleteTask } from '@/api/tasksApi'
 
 const { tasksData } = defineProps(['tasksData'])
-const emit = defineEmits(['updateTasks'])
+const emit = defineEmits(['taskUpdated'])
 
 const editableTaskId = ref(null)
 const editableTaskTitle = ref('')
@@ -33,7 +33,7 @@ const handleUpdateTask = async (taskData, isToggleCheckbox = false) => {
 
       editableTaskId.value = null
       editableTaskTitle.value = ''
-      emit('updateTasks')
+      emit('taskUpdated')
     } catch (error) {
       console.error(error)
       alert('Не удалось обновить задачу')
@@ -44,7 +44,7 @@ const handleUpdateTask = async (taskData, isToggleCheckbox = false) => {
 const handleDeleteTask = async (id) => {
   try {
     await deleteTask(id)
-    emit('updateTasks')
+    emit('taskUpdated')
   } catch (error) {
     console.error(error)
     alert('Не удалось удалить задачу')

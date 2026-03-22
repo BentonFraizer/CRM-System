@@ -10,7 +10,7 @@ const { tabsData, activeTab } = defineProps(['tabsData', 'activeTab'])
       v-for="(value, key) in tabsData"
       :key="TABS[key].status"
       :value="key"
-      @click="$emit('onTabClick', key)"
+      @click="$emit('tabClicked', key)"
       :class="{ active: activeTab === TABS[key].status }"
     >
       {{ TABS[key].title }} <span>{{ value }}</span>

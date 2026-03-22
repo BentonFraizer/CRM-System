@@ -2,12 +2,12 @@
 import TaskItem from '@/components/TaskItem.vue'
 
 const { tasksData } = defineProps(['tasksData'])
-defineEmits(['updateTasks'])
+defineEmits(['taskUpdated'])
 </script>
 
 <template>
   <ul class="tasks-list">
-    <TaskItem :tasks-data="tasksData" @update-tasks="$emit('updateTasks')" />
+    <TaskItem :tasks-data="tasksData" @task-updated="$emit('taskUpdated')" />
   </ul>
 </template>
 

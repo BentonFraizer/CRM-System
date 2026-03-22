@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { createTask } from '@/api/tasksApi.js'
 import { validateTaskTitle } from '@/helpers/helpers.js'
 
-const emit = defineEmits(['updateTasks'])
+const emit = defineEmits(['taskCreated'])
 
 const newTaskTitle = ref('')
 const errorMessage = ref('')
@@ -19,9 +19,9 @@ const handleAddTask = async () => {
       }
 
       await createTask(newTaskData)
-      
+
       newTaskTitle.value = ''
-      emit('updateTasks')
+      emit('taskCreated')
     } catch (error) {
       console.error(error)
       alert('Не удалось создать задачу')
