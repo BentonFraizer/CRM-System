@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { validateTaskTitle } from '@/helpers/helpers'
 import { updateTask, deleteTask } from '@/api/tasksApi'
 
-const { tasksData } = defineProps(['tasksData'])
+const { task } = defineProps(['task'])
 const emit = defineEmits(['taskUpdated'])
 
 const editableTaskId = ref(null)
@@ -51,12 +51,12 @@ const handleDeleteTask = async (id) => {
   }
 }
 
-const handleEditButtonClick = (taskData) => {
+const handleEdit = (taskData) => {
   editableTaskId.value = taskData.id
   editableTaskTitle.value = taskData.title
 }
 
-const handleCancelEditButtonClick = () => {
+const handleCancelEdit = () => {
   editableTaskId.value = null
   editableTaskTitle.value = ''
   editableTaskErrorMessage.value = ''
@@ -64,17 +64,19 @@ const handleCancelEditButtonClick = () => {
 </script>
 
 <template>
-  <li v-for="task in tasksData" :key="task.id" class="task">
-    <form @submit.prevent="handleUpdateTask(task)" v-if="editableTaskId === task.id">
-      <div class="tasks-list__edit-left">
-        <input type="text" v-model.trim="editableTaskTitle" />
-        <span class="error-message">{{ editableTaskErrorMessage }}</span>
-      </div>
-      <div class="tasks-list__right">
-        <button class="icon icon--check" type="submit" />
-        <button class="icon icon--close" type="button" @click="handleCancelEditButtonClick" />
-      </div>
-    </form>
+  <li class="task">
+    <template v-if="editableTaskId === task.id">
+      <form @submit.prevent="handleUpdateTask(task)">
+        <div class="tasks-list__edit-left">
+          <input type="text" v-model.trim="editableTaskTitle" />
+          <span class="error-message">{{ editableTaskErrorMessage }}</span>
+        </div>
+        <div class="tasks-list__right">
+          <button class="icon icon--check" type="submit" />
+          <button class="icon icon--close" type="button" @click="handleCancelEdit" />
+        </div>
+      </form>
+    </template>
 
     <template v-else>
       <div class="tasks-list__left">
@@ -90,7 +92,7 @@ const handleCancelEditButtonClick = () => {
         </label>
       </div>
       <div class="tasks-list__right">
-        <button class="icon icon--edit" type="button" @click="handleEditButtonClick(task)" />
+        <button class="icon icon--edit" type="button" @click="handleEdit(task)" />
         <button class="icon icon--trash" type="button" @click="handleDeleteTask(task.id)" />
       </div>
     </template>

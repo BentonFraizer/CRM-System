@@ -7,7 +7,12 @@ defineEmits(['taskUpdated'])
 
 <template>
   <ul class="tasks-list">
-    <TaskItem :tasks-data="tasksData" @task-updated="$emit('taskUpdated')" />
+    <TaskItem
+      v-for="task in tasksData"
+      :task="task"
+      :key="task.id"
+      @task-updated="$emit('taskUpdated')"
+    />
   </ul>
 </template>
 
