@@ -6,14 +6,14 @@ import { updateTask, deleteTask } from '@/api/tasksApi'
 const { task } = defineProps(['task'])
 const emit = defineEmits(['taskUpdated'])
 
-const editableTaskId = ref(null)
+const isEdit = ref(false)
 const editableTaskTitle = ref('')
 const editableTaskErrorMessage = ref('')
 
 const handleUpdateTask = async (taskData, isToggleCheckbox = false) => {
   // Выход из режима редактирования если в заголовок задачи не было внесено изменений
   if (editableTaskTitle.value === taskData.title && !isToggleCheckbox) {
-    editableTaskId.value = null
+    isEdit.value = false
     editableTaskTitle.value = ''
     return
   }
@@ -31,7 +31,7 @@ const handleUpdateTask = async (taskData, isToggleCheckbox = false) => {
 
       await updateTask(taskDataToSend)
 
-      editableTaskId.value = null
+      isEdit.value = false
       editableTaskTitle.value = ''
       emit('taskUpdated')
     } catch (error) {
@@ -52,12 +52,12 @@ const handleDeleteTask = async (id) => {
 }
 
 const handleEdit = (taskData) => {
-  editableTaskId.value = taskData.id
+  isEdit.value = true
   editableTaskTitle.value = taskData.title
 }
 
 const handleCancelEdit = () => {
-  editableTaskId.value = null
+  isEdit.value = false
   editableTaskTitle.value = ''
   editableTaskErrorMessage.value = ''
 }
@@ -65,7 +65,7 @@ const handleCancelEdit = () => {
 
 <template>
   <li class="task">
-    <template v-if="editableTaskId === task.id">
+    <template v-if="isEdit">
       <form @submit.prevent="handleUpdateTask(task)">
         <div class="tasks-list__edit-left">
           <input type="text" v-model.trim="editableTaskTitle" />
