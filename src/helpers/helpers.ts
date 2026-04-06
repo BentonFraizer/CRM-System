@@ -26,4 +26,4 @@ export const TABS = {
     status: 'completed',
     title: 'Завершенные',
   },
-}
+} as const

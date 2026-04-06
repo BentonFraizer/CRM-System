@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { TABS } from '@/helpers/helpers.ts'
+import type { TaskInfo, TaskStatus } from '@/types/task.ts'
 
-const { tabsData, activeTab } = defineProps(['tabsData', 'activeTab'])
+const { tabsData, activeTab } = defineProps<{
+  tabsData: TaskInfo
+  activeTab: TaskStatus
+}>()
 </script>
 
 <template>

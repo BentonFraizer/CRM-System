@@ -6,14 +6,13 @@ import CreateTask from '@/components/CreateTask.vue'
 import TasksTabs from '@/components/TasksTabs.vue'
 import TasksList from '@/components/TasksList.vue'
 import type { MetaResponse } from '@/types/api.ts'
-import type { Task, TaskInfo } from '@/types/task.ts'
+import type { Task, TaskInfo, TaskStatus } from '@/types/task.ts'
 
 const tasksInfo = ref<MetaResponse<Task, TaskInfo>>()
+const isLoading = ref<boolean>(false)
+const activeTab = ref<TaskStatus>(TABS.all.status)
 
-const isLoading = ref(false)
-const activeTab = ref(TABS.all.status)
-
-const onTabClick = async (status) => {
+const onTabClick = async (status: TaskStatus) => {
   activeTab.value = status
   try {
     isLoading.value = true
@@ -55,7 +54,12 @@ onMounted(async () => {
   <div class="container">
     <CreateTask @task-created="onUpdateTasks" />
 
-    <TasksTabs @tab-clicked="onTabClick" :tabs-data="tasksInfo?.info" :active-tab="activeTab" />
+    <TasksTabs
+      v-if="tasksInfo"
+      :tabs-data="tasksInfo.info"
+      :active-tab="activeTab"
+      @tab-clicked="onTabClick"
+    />
 
     <div v-if="isLoading">Loading...</div>
 

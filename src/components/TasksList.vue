@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import TaskItem from '@/components/TaskItem.vue'
+import type { Task } from '@/types/task.ts'
 
-const { tasksData } = defineProps(['tasksData'])
-defineEmits(['taskUpdated'])
+const { tasksData } = defineProps<{
+  tasksData: Task[]
+}>()
+defineEmits<{
+  taskUpdated: []
+}>()
 </script>
 
 <template>

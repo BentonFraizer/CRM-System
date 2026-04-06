@@ -1,8 +1,10 @@
 import { TABS } from '@/helpers/helpers.ts'
 import type { MetaResponse, TaskRequest } from '@/types/api.ts'
-import type { Task, TaskInfo } from '@/types/task.ts'
+import type { Task, TaskInfo, TaskStatus } from '@/types/task.ts'
 
-export const getTasks = async (status = TABS.all.status): Promise<MetaResponse<Task, TaskInfo>> => {
+export const getTasks = async (
+  status: TaskStatus = TABS.all.status,
+): Promise<MetaResponse<Task, TaskInfo>> => {
   const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`)
   if (!response.ok) {
     const errorData = await response.json()

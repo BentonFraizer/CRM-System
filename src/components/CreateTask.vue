@@ -3,10 +3,12 @@ import { ref } from 'vue'
 import { createTask } from '@/api/tasksApi.ts'
 import { validateTaskTitle } from '@/helpers/helpers.ts'
 
-const emit = defineEmits(['taskCreated'])
+const emit = defineEmits<{
+  taskCreated: []
+}>()
 
-const newTaskTitle = ref('')
-const errorMessage = ref('')
+const newTaskTitle = ref<string>('')
+const errorMessage = ref<string>('')
 
 const handleAddTask = async () => {
   errorMessage.value = validateTaskTitle(newTaskTitle.value)

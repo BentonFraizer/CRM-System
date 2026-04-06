@@ -2,15 +2,20 @@
 import { ref } from 'vue'
 import { validateTaskTitle } from '@/helpers/helpers.ts'
 import { updateTask, deleteTask } from '@/api/tasksApi.ts'
+import type { Task } from '@/types/task.ts'
 
-const { task } = defineProps(['task'])
-const emit = defineEmits(['taskUpdated'])
+const { task } = defineProps<{
+  task: Task
+}>()
+const emit = defineEmits<{
+  taskUpdated: []
+}>()
 
-const isEdit = ref(false)
-const editableTaskTitle = ref('')
-const editableTaskErrorMessage = ref('')
+const isEdit = ref<boolean>(false)
+const editableTaskTitle = ref<string>('')
+const editableTaskErrorMessage = ref<string>('')
 
-const handleUpdateTask = async (taskData, isToggleCheckbox = false) => {
+const handleUpdateTask = async (taskData: Task, isToggleCheckbox = false) => {
   // Выход из режима редактирования если в заголовок задачи не было внесено изменений
   if (editableTaskTitle.value === taskData.title && !isToggleCheckbox) {
     isEdit.value = false
@@ -41,7 +46,7 @@ const handleUpdateTask = async (taskData, isToggleCheckbox = false) => {
   }
 }
 
-const handleDeleteTask = async (id) => {
+const handleDeleteTask = async (id: number) => {
   try {
     await deleteTask(id)
     emit('taskUpdated')
@@ -51,7 +56,7 @@ const handleDeleteTask = async (id) => {
   }
 }
 
-const handleEdit = (taskData) => {
+const handleEdit = (taskData: Task) => {
   isEdit.value = true
   editableTaskTitle.value = taskData.title
 }
@@ -85,9 +90,9 @@ const handleCancelEdit = () => {
           class="checkbox-input"
           :checked="task.isDone"
           @change="handleUpdateTask(task, true)"
-          :id="task.id"
+          :id="task.id.toString()"
         />
-        <label :for="task.id" :class="{ 'is-done': task.isDone }">
+        <label :for="task.id.toString()" :class="{ 'is-done': task.isDone }">
           {{ task.title }}
         </label>
       </div>
