@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { validateTaskTitle } from '@/helpers/helpers'
-import { updateTask, deleteTask } from '@/api/tasksApi'
+import { validateTaskTitle } from '@/helpers/helpers.ts'
+import { updateTask, deleteTask } from '@/api/tasksApi.ts'
 
 const { task } = defineProps(['task'])
 const emit = defineEmits(['taskUpdated'])

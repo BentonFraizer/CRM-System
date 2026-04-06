@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TABS } from '@/helpers/helpers'
+import { TABS } from '@/helpers/helpers.ts'
 
 const { tabsData, activeTab } = defineProps(['tabsData', 'activeTab'])
 </script>

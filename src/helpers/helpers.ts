@@ -1,4 +1,4 @@
-export const validateTaskTitle = (title) => {
+export const validateTaskTitle = (title: string): string => {
   let errorMessage = ''
   const MIN_TITLE_LENGTH = 2
   const MAX_TITLE_LENGTH = 64

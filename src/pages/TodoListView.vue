@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { getTasks } from '@/api/tasksApi'
-import { TABS } from '@/helpers/helpers'
+import { getTasks } from '@/api/tasksApi.ts'
+import { TABS } from '@/helpers/helpers.ts'
 import CreateTask from '@/components/CreateTask.vue'
 import TasksTabs from '@/components/TasksTabs.vue'
 import TasksList from '@/components/TasksList.vue'
+import type { MetaResponse } from '@/types/api.ts'
+import type { Task, TaskInfo } from '@/types/task.ts'
 
-const tasksInfo = ref({
-  data: [],
-  info: {},
-  meta: {},
-})
+const tasksInfo = ref<MetaResponse<Task, TaskInfo>>()
 
 const isLoading = ref(false)
 const activeTab = ref(TABS.all.status)
@@ -57,13 +55,13 @@ onMounted(async () => {
   <div class="container">
     <CreateTask @task-created="onUpdateTasks" />
 
-    <TasksTabs @tab-clicked="onTabClick" :tabs-data="tasksInfo.info" :active-tab="activeTab" />
+    <TasksTabs @tab-clicked="onTabClick" :tabs-data="tasksInfo?.info" :active-tab="activeTab" />
 
     <div v-if="isLoading">Loading...</div>
 
     <TasksList
-      v-else-if="tasksInfo.data.length > 0"
-      :tasks-data="tasksInfo.data"
+      v-else-if="tasksInfo?.data && tasksInfo?.data.length > 0"
+      :tasks-data="tasksInfo?.data"
       @task-updated="onUpdateTasks"
     />
 
