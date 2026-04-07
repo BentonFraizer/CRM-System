@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { createTask } from '@/api/tasksApi.ts'
 import { validateTaskTitle } from '@/helpers/helpers.ts'
+import Button from '@/ui/Button.vue'
 
 const emit = defineEmits<{
   taskCreated: []
@@ -38,7 +39,7 @@ const handleAddTask = async () => {
       <input type="text" placeholder="Task To Be Done" v-model.trim="newTaskTitle" />
       <span class="error-message">{{ errorMessage }}</span>
     </div>
-    <button type="submit">Создать</button>
+    <Button html-type="submit" type="primary" size="large">Создать</Button>
   </form>
 </template>
 
@@ -52,21 +53,7 @@ const handleAddTask = async () => {
   & input {
     padding: 10px 5px;
     border: 0;
-    border-bottom: 2px solid var(--bg-border);
-  }
-
-  & button {
-    cursor: pointer;
-    background-color: var(--primary);
-    border: none;
-    border-radius: 10px;
-    color: var(--text-white);
-    padding: 5px 30px;
-    font-size: 20px;
-  }
-
-  & button:hover {
-    background-color: var(--primary-hover);
+    border-bottom: 2px solid var(--border);
   }
 }
 

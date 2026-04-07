@@ -38,7 +38,7 @@ input {
 
 .is-done {
   text-decoration: line-through;
-  color: var(--text-secondary);
+  color: var(--text-disabled);
 }
 
 /* Кастомизация чекбокса */
@@ -82,7 +82,7 @@ input:disabled {
   background-color: var(--bg-checkbox-disabled);
 
   & + label {
-    color: var(--text-secondary);
+    color: var(--text-disabled);
   }
 }
 </style>

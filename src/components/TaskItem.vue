@@ -139,6 +139,21 @@ const handleCancelEdit = () => {
   align-items: center;
 }
 
+.icon {
+  display: block;
+
+  margin: 0;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+
+  cursor: pointer;
+
+  border: none;
+  background-color: transparent;
+  background-size: cover;
+}
+
 .icon--edit {
   background-color: var(--primary);
   mask: url('@/assets/icons/icon-pencil.svg') no-repeat center;
