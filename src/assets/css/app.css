@@ -26,6 +26,7 @@
 
   /* Button */
   --bg-btn-disabled: #F5F5F5;
+  --bg-icon-btn-disabled: #e1e1e1;
   --bg-btn-default: #FFFFFF;
   --bg-btn-default-hover: #E3E3E3;
   --border-btn-default: #d9d9d9;
@@ -52,4 +53,9 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
+}
+
+button {
+  cursor: pointer;
+  border: none;
 }

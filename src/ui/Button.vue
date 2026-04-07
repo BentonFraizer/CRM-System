@@ -83,11 +83,6 @@ const resultClass = ref<string>(`${type} ${size}`)
   height: 38px;
 }
 
-button {
-  cursor: pointer;
-  border: none;
-}
-
 button:disabled,
 button:disabled:hover {
   cursor: not-allowed;

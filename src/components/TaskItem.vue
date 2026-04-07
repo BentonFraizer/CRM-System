@@ -4,6 +4,7 @@ import { validateTaskTitle } from '@/helpers/helpers.ts'
 import { updateTask, deleteTask } from '@/api/tasksApi.ts'
 import type { Task } from '@/types/task.ts'
 import Checkbox from '@/ui/Checkbox.vue'
+import IconButton from '@/ui/IconButton.vue'
 
 defineProps<{
   task: Task
@@ -78,8 +79,8 @@ const handleCancelEdit = () => {
           <span class="error-message">{{ editableTaskErrorMessage }}</span>
         </div>
         <div class="tasks-list__right">
-          <button class="icon icon--check" type="submit" />
-          <button class="icon icon--close" type="button" @click="handleCancelEdit" />
+          <IconButton icon-name="check" html-type="submit" />
+          <IconButton icon-name="close" @click="handleCancelEdit" />
         </div>
       </form>
     </template>
@@ -94,8 +95,8 @@ const handleCancelEdit = () => {
         />
       </div>
       <div class="tasks-list__right">
-        <button class="icon icon--edit" type="button" @click="handleEdit(task)" />
-        <button class="icon icon--trash" type="button" @click="handleDeleteTask(task.id)" />
+        <IconButton icon-name="edit" @click="handleEdit(task)" />
+        <IconButton icon-name="trash" @click="handleDeleteTask(task.id)" />
       </div>
     </template>
   </li>
@@ -137,48 +138,6 @@ const handleCancelEdit = () => {
 .tasks-list__left {
   display: flex;
   align-items: center;
-}
-
-.icon {
-  display: block;
-
-  margin: 0;
-  padding: 0;
-  width: 20px;
-  height: 20px;
-
-  cursor: pointer;
-
-  border: none;
-  background-color: transparent;
-  background-size: cover;
-}
-
-.icon--edit {
-  background-color: var(--primary);
-  mask: url('@/assets/icons/icon-pencil.svg') no-repeat center;
-  mask-size: contain;
-}
-
-.icon--trash {
-  width: 16px;
-  background-color: var(--danger);
-  mask: url('@/assets/icons/icon-trash.svg') no-repeat center;
-  mask-size: contain;
-}
-
-.icon--check {
-  background-color: var(--success);
-  mask: url('@/assets/icons/icon-check.svg') no-repeat center;
-  mask-size: contain;
-}
-
-.icon--close {
-  height: 24px;
-  width: 24px;
-  background-color: var(--danger);
-  mask: url('@/assets/icons/icon-close.svg') no-repeat center;
-  mask-size: contain;
 }
 
 .error-message {
