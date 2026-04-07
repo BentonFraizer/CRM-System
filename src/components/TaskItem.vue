@@ -3,8 +3,9 @@ import { ref } from 'vue'
 import { validateTaskTitle } from '@/helpers/helpers.ts'
 import { updateTask, deleteTask } from '@/api/tasksApi.ts'
 import type { Task } from '@/types/task.ts'
+import Checkbox from '@/ui/Checkbox.vue'
 
-const { task } = defineProps<{
+defineProps<{
   task: Task
 }>()
 const emit = defineEmits<{
@@ -85,16 +86,12 @@ const handleCancelEdit = () => {
 
     <template v-else>
       <div class="tasks-list__left">
-        <input
-          type="checkbox"
-          class="checkbox-input"
-          :checked="task.isDone"
-          @change="handleUpdateTask(task, true)"
+        <Checkbox
           :id="task.id.toString()"
+          :checked="task.isDone"
+          :label="task.title"
+          @change="handleUpdateTask(task, true)"
         />
-        <label :for="task.id.toString()" :class="{ 'is-done': task.isDone }">
-          {{ task.title }}
-        </label>
       </div>
       <div class="tasks-list__right">
         <button class="icon icon--edit" type="button" @click="handleEdit(task)" />
@@ -140,66 +137,6 @@ const handleCancelEdit = () => {
 .tasks-list__left {
   display: flex;
   align-items: center;
-
-  input,
-  label {
-    cursor: pointer;
-  }
-
-  input {
-    margin-right: 10px;
-  }
-
-  & .is-done {
-    text-decoration: line-through;
-    color: var(--text-secondary);
-  }
-}
-
-/* Кастомизация чекбокса */
-.checkbox-input {
-  appearance: none;
-  position: relative;
-  width: 22px;
-  height: 22px;
-  background: var(--bg-base);
-  border: 2px solid var(--bg-primary);
-  border-radius: 50%;
-}
-
-.checkbox-input::after {
-  content: '';
-  background: var(--primary);
-  color: var(--bg-base);
-  background-image: url('@/assets/icons/icon-white-check-mark.svg');
-  position: absolute;
-  top: -1px;
-  left: -1px;
-  width: 0;
-  height: 0;
-  font-size: 18px;
-  overflow: hidden;
-  border-radius: 50%;
-}
-
-.checkbox-input:checked::after {
-  width: 20px;
-  height: 20px;
-}
-
-.icon {
-  display: block;
-
-  margin: 0;
-  padding: 0;
-  width: 20px;
-  height: 20px;
-
-  cursor: pointer;
-
-  border: none;
-  background-color: transparent;
-  background-size: cover;
 }
 
 .icon--edit {
