@@ -111,7 +111,7 @@ const handleCancelEdit = () => {
   justify-content: space-between;
   width: 450px;
   height: 40px;
-  background-color: var(--primary-bg-color);
+  background-color: var(--bg-base);
   border-radius: 10px;
   padding: 10px;
 
@@ -141,13 +141,18 @@ const handleCancelEdit = () => {
   display: flex;
   align-items: center;
 
+  input,
+  label {
+    cursor: pointer;
+  }
+
   input {
     margin-right: 10px;
   }
 
   & .is-done {
     text-decoration: line-through;
-    color: var(--secondary-color);
+    color: var(--text-secondary);
   }
 }
 
@@ -157,15 +162,15 @@ const handleCancelEdit = () => {
   position: relative;
   width: 22px;
   height: 22px;
-  background: var(--primary-bg-color);
-  border: 2px solid var(--secondary-bg-color);
+  background: var(--bg-base);
+  border: 2px solid var(--bg-primary);
   border-radius: 50%;
 }
 
 .checkbox-input::after {
   content: '';
-  background: var(--primary-btn-bg-color);
-  color: var(--primary-bg-color);
+  background: var(--primary);
+  color: var(--bg-base);
   background-image: url('@/assets/icons/icon-white-check-mark.svg');
   position: absolute;
   top: -1px;
@@ -198,20 +203,20 @@ const handleCancelEdit = () => {
 }
 
 .icon--edit {
-  background-color: var(--primary-btn-bg-color);
+  background-color: var(--primary);
   mask: url('@/assets/icons/icon-pencil.svg') no-repeat center;
   mask-size: contain;
 }
 
 .icon--trash {
   width: 16px;
-  background-color: var(--danger-btn-bg-color);
+  background-color: var(--danger);
   mask: url('@/assets/icons/icon-trash.svg') no-repeat center;
   mask-size: contain;
 }
 
 .icon--check {
-  background-color: var(--success-btn-bg-color);
+  background-color: var(--success);
   mask: url('@/assets/icons/icon-check.svg') no-repeat center;
   mask-size: contain;
 }
@@ -219,13 +224,13 @@ const handleCancelEdit = () => {
 .icon--close {
   height: 24px;
   width: 24px;
-  background-color: var(--danger-btn-bg-color);
+  background-color: var(--danger);
   mask: url('@/assets/icons/icon-close.svg') no-repeat center;
   mask-size: contain;
 }
 
 .error-message {
-  color: var(--error-color);
+  color: var(--danger);
   font-size: 14px;
   height: 16px;
 }

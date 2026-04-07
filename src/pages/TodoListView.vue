@@ -95,6 +95,6 @@ li {
   align-items: center;
   border-radius: 30px;
   padding: 30px;
-  background-color: var(--secondary-bg-color);
+  background-color: var(--bg-primary);
 }
 </style>

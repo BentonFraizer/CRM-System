@@ -37,7 +37,7 @@ li {
   gap: 10px;
 
   & li {
-    background-color: var(--primary-tab-bg-color);
+    background-color: var(--bg-tab);
     cursor: pointer;
     padding: 5px 10px;
     border-radius: 5px;
@@ -49,13 +49,13 @@ li {
   }
 
   & li:hover {
-    background-color: var(--on-primary-tab-bg-color);
+    background-color: var(--bg-tab-hover);
   }
 
   & li.active {
     opacity: 1;
-    background-color: var(--active-tab-bg-color);
-    color: var(--primary-color);
+    background-color: var(--bg-tab-active);
+    color: var(--text-white);
   }
 }
 </style>
