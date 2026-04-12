@@ -5,6 +5,7 @@ import { updateTask, deleteTask } from '@/api/tasksApi.ts'
 import type { Task } from '@/types/task.ts'
 import Checkbox from '@/ui/Checkbox.vue'
 import IconButton from '@/ui/IconButton.vue'
+import Input from '@/ui/Input.vue'
 
 defineProps<{
   task: Task
@@ -75,11 +76,14 @@ const handleCancelEdit = () => {
     <template v-if="isEdit">
       <form @submit.prevent="handleUpdateTask(task)">
         <div class="tasks-list__edit-left">
-          <input type="text" v-model.trim="editableTaskTitle" />
-          <span class="error-message">{{ editableTaskErrorMessage }}</span>
+          <Input
+            type="text"
+            v-model:value.trim="editableTaskTitle"
+            :error-message="editableTaskErrorMessage"
+          />
         </div>
         <div class="tasks-list__right">
-          <IconButton icon-name="check" html-type="submit" />
+          <IconButton icon-name="check" type="submit" />
           <IconButton icon-name="close" @click="handleCancelEdit" />
         </div>
       </form>
@@ -121,12 +125,9 @@ const handleCancelEdit = () => {
 }
 
 .tasks-list__edit-left {
+  width: 70%;
   display: flex;
   flex-direction: column;
-
-  & input {
-    width: 270px;
-  }
 }
 
 .tasks-list__right {

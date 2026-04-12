@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { type ButtonHTMLAttributes, ref } from 'vue'
 
-const {
-  htmlType = 'button',
-  disabled,
-  iconName,
-} = defineProps<{
-  htmlType?: ButtonHTMLAttributes['type']
+const { type = 'button', iconName } = defineProps<{
+  type?: ButtonHTMLAttributes['type']
   iconName: 'edit' | 'trash' | 'check' | 'close'
   disabled?: boolean
 }>()
@@ -19,13 +15,7 @@ const resultClass = ref<string>(`icon--${iconName}`)
 </script>
 
 <template>
-  <button
-    :type="htmlType"
-    :disabled="disabled"
-    class="icon"
-    :class="resultClass"
-    @click="$emit('click')"
-  ></button>
+  <button :type :disabled class="icon" :class="resultClass" @click="$emit('click')"></button>
 </template>
 
 <style scoped>
