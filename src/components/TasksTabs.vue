@@ -1,61 +1,37 @@
 <script setup lang="ts">
-import { TABS } from '@/helpers/helpers.ts'
 import type { TaskInfo, TaskStatus } from '@/types/task.ts'
+import Tabs from '@/ui/Tabs.vue'
+import type { TabsProps } from '@/types/tab.ts'
+import { computed } from 'vue'
 
 const { tabsData, activeTab } = defineProps<{
   tabsData: TaskInfo
   activeTab: TaskStatus
 }>()
+
+const emit = defineEmits<{
+  tabClicked: [key: TaskStatus]
+}>()
+
+const getTabItemsCorrectFormat = (tabsData: TaskInfo): TabsProps[] => {
+  return Object.entries(tabsData).map(([key, value]) => ({
+    id: key as TaskStatus,
+    label: String(value),
+  }))
+}
+
+const tabsItems = computed(() => {
+  if (!tabsData) return []
+  return getTabItemsCorrectFormat(tabsData)
+})
+
+const onTabClicked = (status: TaskStatus) => {
+  emit('tabClicked', status)
+}
 </script>
 
 <template>
-  <ul class="tabs">
-    <li
-      v-for="(value, key) in tabsData"
-      :key="TABS[key].status"
-      :value="key"
-      @click="$emit('tabClicked', key)"
-      :class="{ active: activeTab === TABS[key].status }"
-    >
-      {{ TABS[key].title }} <span>{{ value }}</span>
-    </li>
-  </ul>
+  <Tabs :tabs="tabsItems" :active-tab="activeTab" @on-tab-click="onTabClicked" />
 </template>
 
-<style scoped>
-/* Компонент табов/вкладок */
-ul {
-  padding: 0;
-}
-
-li {
-  list-style-type: none;
-}
-
-.tabs {
-  display: flex;
-  gap: 10px;
-
-  & li {
-    background-color: var(--bg-tab);
-    cursor: pointer;
-    padding: 5px 10px;
-    border-radius: 5px;
-    opacity: 0.7;
-  }
-
-  & li span {
-    font-weight: bold;
-  }
-
-  & li:hover {
-    background-color: var(--bg-tab-hover);
-  }
-
-  & li.active {
-    opacity: 1;
-    background-color: var(--bg-tab-active);
-    color: var(--text-white);
-  }
-}
-</style>
+<style scoped></style>
