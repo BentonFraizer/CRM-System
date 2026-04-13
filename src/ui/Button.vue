@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import type { ButtonHTMLAttributes } from 'vue'
 
 const {
@@ -17,14 +16,12 @@ const {
 defineEmits<{
   click: []
 }>()
-
-const resultClass = ref<string>(`${type} ${size}`)
 </script>
 
 <template>
   <button
     :type="htmlType ?? 'button'"
-    :class="resultClass"
+    :class="[type, size]"
     :disabled="disabled"
     @click="$emit('click')"
   >

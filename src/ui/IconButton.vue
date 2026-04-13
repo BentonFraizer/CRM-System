@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type ButtonHTMLAttributes, ref } from 'vue'
+import { type ButtonHTMLAttributes } from 'vue'
 
 const { type = 'button', iconName } = defineProps<{
   type?: ButtonHTMLAttributes['type']
@@ -10,12 +10,16 @@ const { type = 'button', iconName } = defineProps<{
 defineEmits<{
   click: []
 }>()
-
-const resultClass = ref<string>(`icon--${iconName}`)
 </script>
 
 <template>
-  <button :type :disabled class="icon" :class="resultClass" @click="$emit('click')"></button>
+  <button
+    :type
+    :disabled
+    class="icon"
+    :class="[`icon--${iconName}`]"
+    @click="$emit('click')"
+  ></button>
 </template>
 
 <style scoped>

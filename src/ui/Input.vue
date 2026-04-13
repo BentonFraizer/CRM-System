@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type InputTypeHTMLAttribute, ref } from 'vue'
+import { type InputTypeHTMLAttribute } from 'vue'
 
 const {
   type = 'text',
@@ -20,7 +20,6 @@ const {
 }>()
 
 const value = defineModel('value')
-const resultClass = ref<string>(`${className} ${size}`)
 </script>
 
 <template>
@@ -30,7 +29,7 @@ const resultClass = ref<string>(`${className} ${size}`)
       :placeholder="placeholder"
       :disabled="disabled"
       v-model="value"
-      :class="resultClass"
+      :class="[className, size]"
       :style="styleName"
     />
     <span class="error-message">{{ errorMessage }}</span>
