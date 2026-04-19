@@ -1,22 +1,16 @@
 <script setup lang="ts">
 import { type InputTypeHTMLAttribute } from 'vue'
 
-const {
-  type = 'text',
-  placeholder,
-  errorMessage,
-  disabled,
-  size = 'medium',
-  className = '',
-  styleName = '',
-} = defineProps<{
-  type: InputTypeHTMLAttribute
+defineOptions({
+  inheritAttrs: false,
+})
+
+const props = defineProps<{
+  type?: InputTypeHTMLAttribute
   placeholder?: string
   errorMessage?: string
-  disabled?: boolean
+  isDisabled?: boolean
   size?: 'small' | 'medium' | 'large'
-  className?: string
-  styleName?: string
 }>()
 
 const value = defineModel('value')
@@ -25,14 +19,14 @@ const value = defineModel('value')
 <template>
   <div class="input-wrapper">
     <input
-      :type
-      :placeholder="placeholder"
-      :disabled="disabled"
+      v-bind="$attrs"
+      :type="props.type ?? 'text'"
+      :placeholder="props.placeholder"
+      :disabled="props.isDisabled"
       v-model="value"
-      :class="[className, size]"
-      :style="styleName"
+      :class="props.size ?? 'medium'"
     />
-    <span class="error-message">{{ errorMessage }}</span>
+    <span class="error-message">{{ props.errorMessage }}</span>
   </div>
 </template>
 
@@ -54,7 +48,7 @@ input {
 .error-message {
   color: var(--danger);
   font-size: 14px;
-  height: 16px;
+  min-height: 16px;
 }
 
 .small {
@@ -69,5 +63,10 @@ input {
 .large {
   padding: 10px 11px;
   font-size: 16px;
+}
+
+.border-bottom {
+  border: 0;
+  border-bottom: 2px solid var(--border-btn-default);
 }
 </style>

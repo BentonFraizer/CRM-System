@@ -7,6 +7,7 @@ import TasksTabs from '@/components/TasksTabs.vue'
 import TasksList from '@/components/TasksList.vue'
 import type { MetaResponse } from '@/types/api.ts'
 import type { Task, TaskInfo, TaskStatus } from '@/types/task.ts'
+import { loadTasks } from '@/helpers/helpers.ts'
 
 const tasksInfo = ref<MetaResponse<Task, TaskInfo>>()
 const isLoading = ref<boolean>(false)
@@ -14,39 +15,19 @@ const activeTab = ref<TaskStatus>(TASK_FILTERS.all.status)
 
 const onTabClick = async (status: TaskStatus) => {
   activeTab.value = status
-  try {
-    isLoading.value = true
-    tasksInfo.value = await getTasks(status)
-  } catch (error) {
-    console.error(error)
-    alert('Не удалось загрузить список задач для вкладки')
-  } finally {
-    isLoading.value = false
-  }
+  tasksInfo.value = await loadTasks(
+    activeTab.value,
+    isLoading,
+    'Не удалось загрузить список задач для вкладки',
+  )
 }
 
 const onUpdateTasks = async () => {
-  try {
-    isLoading.value = true
-    tasksInfo.value = await getTasks(activeTab.value)
-  } catch (error) {
-    console.error(error)
-    alert('Не удалось обновить список задач')
-  } finally {
-    isLoading.value = false
-  }
+  tasksInfo.value = await loadTasks(activeTab.value, isLoading, 'Не удалось обновить список задач')
 }
 
 onMounted(async () => {
-  try {
-    isLoading.value = true
-    tasksInfo.value = await getTasks()
-  } catch (error) {
-    console.error(error)
-    alert('Не удалось загрузить список задач')
-  } finally {
-    isLoading.value = false
-  }
+  tasksInfo.value = await loadTasks(activeTab.value, isLoading, 'Не удалось загрузить список задач')
 })
 </script>
 

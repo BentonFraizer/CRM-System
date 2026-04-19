@@ -4,12 +4,12 @@ import type { ButtonHTMLAttributes } from 'vue'
 const {
   htmlType,
   type = 'default',
-  disabled,
+  isDisabled,
   size = 'medium',
 } = defineProps<{
   htmlType?: ButtonHTMLAttributes['type']
   type?: 'default' | 'primary' | 'danger'
-  disabled?: boolean
+  isDisabled?: boolean
   size?: 'small' | 'medium' | 'large'
 }>()
 
@@ -22,7 +22,7 @@ defineEmits<{
   <button
     :type="htmlType ?? 'button'"
     :class="[type, size]"
-    :disabled="disabled"
+    :disabled="isDisabled"
     @click="$emit('click')"
   >
     <slot></slot>

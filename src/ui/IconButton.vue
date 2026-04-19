@@ -4,7 +4,7 @@ import { type ButtonHTMLAttributes } from 'vue'
 const { type = 'button', iconName } = defineProps<{
   type?: ButtonHTMLAttributes['type']
   iconName: 'edit' | 'trash' | 'check' | 'close'
-  disabled?: boolean
+  isDisabled?: boolean
 }>()
 
 defineEmits<{
@@ -15,7 +15,7 @@ defineEmits<{
 <template>
   <button
     :type
-    :disabled
+    :disabled="isDisabled"
     class="icon"
     :class="[`icon--${iconName}`]"
     @click="$emit('click')"
@@ -50,7 +50,6 @@ defineEmits<{
 }
 
 .icon--trash {
-  width: 16px;
   background-color: var(--danger);
   mask: url('@/assets/icons/icon-trash.svg') no-repeat center;
   mask-size: contain;
@@ -63,8 +62,6 @@ defineEmits<{
 }
 
 .icon--close {
-  height: 24px;
-  width: 24px;
   background-color: var(--danger);
   mask: url('@/assets/icons/icon-close.svg') no-repeat center;
   mask-size: contain;

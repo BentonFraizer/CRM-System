@@ -13,7 +13,7 @@ const emit = defineEmits<{
   tabClicked: [key: TaskStatus]
 }>()
 
-const getTabItemsCorrectFormat = (tabsData: TaskInfo): TabsProps[] => {
+const transformTaskInfoToTabs = (tabsData: TaskInfo): TabsProps[] => {
   return Object.entries(tabsData).map(([key, value]) => ({
     id: key as TaskStatus,
     label: String(value),
@@ -22,7 +22,7 @@ const getTabItemsCorrectFormat = (tabsData: TaskInfo): TabsProps[] => {
 
 const tabsItems = computed(() => {
   if (!tabsData) return []
-  return getTabItemsCorrectFormat(tabsData)
+  return transformTaskInfoToTabs(tabsData)
 })
 
 const onTabClicked = (status: TaskStatus) => {

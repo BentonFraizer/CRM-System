@@ -1,3 +1,7 @@
+import { getTasks } from '@/api/tasksApi.ts'
+import type { Ref } from 'vue'
+import type { TaskStatus } from '@/types/task.ts'
+
 export const validateTaskTitle = (title: string): string => {
   let errorMessage = ''
   const MIN_TITLE_LENGTH = 2
@@ -11,4 +15,20 @@ export const validateTaskTitle = (title: string): string => {
   }
 
   return errorMessage
+}
+
+export const loadTasks = async (
+  status: TaskStatus,
+  isLoading: Ref<boolean, boolean>,
+  errorMessage: string,
+) => {
+  try {
+    isLoading.value = true
+    return await getTasks(status)
+  } catch (error) {
+    console.error(error)
+    alert(errorMessage)
+  } finally {
+    isLoading.value = false
+  }
 }

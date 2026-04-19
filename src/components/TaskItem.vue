@@ -34,7 +34,7 @@ const handleUpdateTask = async (taskData: Task, isToggleCheckbox = false) => {
       const taskDataToSend = {
         id: taskData.id,
         isDone: isToggleCheckbox ? !taskData.isDone : taskData.isDone,
-        title: editableTaskTitle.value,
+        title: editableTaskTitle.value || taskData.title,
       }
 
       await updateTask(taskDataToSend)
@@ -93,7 +93,7 @@ const handleCancelEdit = () => {
       <div class="tasks-list__left">
         <Checkbox
           :id="task.id.toString()"
-          :checked="task.isDone"
+          :isChecked="task.isDone"
           :label="task.title"
           @change="handleUpdateTask(task, true)"
         />

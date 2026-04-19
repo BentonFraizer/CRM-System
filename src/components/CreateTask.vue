@@ -42,7 +42,7 @@ const handleAddTask = async () => {
       v-model:value.trim="newTaskTitle"
       :error-message="errorMessage"
       size="large"
-      style-name="border: 0; border-bottom: 1px solid var(--border-btn-default)"
+      class-name="border-bottom"
     />
     <Button html-type="submit" type="primary" size="large">Создать</Button>
   </form>

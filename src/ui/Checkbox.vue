@@ -1,10 +1,13 @@
 <script setup lang="ts">
+defineOptions({
+  inheritAttrs: false,
+})
+
 defineProps<{
-  checked: boolean
+  isChecked: boolean
   label: string
   id: string
-  disabled?: boolean
-  classNames?: string
+  isDisabled?: boolean
 }>()
 
 defineEmits<{
@@ -14,15 +17,15 @@ defineEmits<{
 
 <template>
   <input
+    v-bind="$attrs"
     type="checkbox"
     :id="id"
-    :checked="checked"
-    :disabled="disabled"
+    :checked="isChecked"
+    :disabled="isDisabled"
     class="checkbox-input"
-    :class="classNames"
     @change="$emit('change')"
   />
-  <label :for="id" :class="{ 'is-done': checked }">{{ label }}</label>
+  <label :for="id" :class="{ 'is-done': isChecked }">{{ label }}</label>
 </template>
 
 <style scoped>
@@ -32,7 +35,6 @@ label {
 }
 
 input {
-  width: 270px;
   margin-right: 10px;
 }
 
