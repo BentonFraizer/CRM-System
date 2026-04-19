@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { getTasks } from '@/api/tasksApi.ts'
-import { TABS } from '@/helpers/helpers.ts'
+import { TASK_FILTERS } from '@/helpers/consts.ts'
 import CreateTask from '@/components/CreateTask.vue'
 import TasksTabs from '@/components/TasksTabs.vue'
 import TasksList from '@/components/TasksList.vue'
@@ -10,7 +10,7 @@ import type { Task, TaskInfo, TaskStatus } from '@/types/task.ts'
 
 const tasksInfo = ref<MetaResponse<Task, TaskInfo>>()
 const isLoading = ref<boolean>(false)
-const activeTab = ref<TaskStatus>(TABS.all.status)
+const activeTab = ref<TaskStatus>(TASK_FILTERS.all.status)
 
 const onTabClick = async (status: TaskStatus) => {
   activeTab.value = status

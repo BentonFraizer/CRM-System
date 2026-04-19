@@ -11,3 +11,10 @@ export interface TaskRequest {
   title: string
   isDone?: boolean
 }
+
+export interface CreateUpdateTaskResponse {
+  id: number
+  title: string
+  isDone: boolean
+  created: string
+}

@@ -12,18 +12,3 @@ export const validateTaskTitle = (title: string): string => {
 
   return errorMessage
 }
-
-export const TABS = {
-  all: {
-    status: 'all',
-    title: 'Все',
-  },
-  inWork: {
-    status: 'inWork',
-    title: 'В работе',
-  },
-  completed: {
-    status: 'completed',
-    title: 'Завершенные',
-  },
-} as const

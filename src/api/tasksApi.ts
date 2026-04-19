@@ -1,23 +1,23 @@
-import { TABS } from '@/helpers/helpers.ts'
-import type { MetaResponse, TaskRequest } from '@/types/api.ts'
+import { TASK_FILTERS } from '@/helpers/consts.ts'
+import type { CreateUpdateTaskResponse, MetaResponse, TaskRequest } from '@/types/api.ts'
 import type { Task, TaskInfo, TaskStatus } from '@/types/task.ts'
+import { BASE_URL } from '@/helpers/consts.ts'
 
 export const getTasks = async (
-  status: TaskStatus = TABS.all.status,
+  status: TaskStatus = TASK_FILTERS.all.status,
 ): Promise<MetaResponse<Task, TaskInfo>> => {
-  const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`)
-  if (!response.ok) {
-    const errorData = await response.json()
+  try {
+    const response = await fetch(`${BASE_URL}/todos?filter=${status}`)
 
-    throw new Error(errorData.message || 'Не удалось загрузить список задач')
+    return await response.json()
+  } catch (error) {
+    throw error
   }
-
-  return await response.json()
 }
 
-export const createTask = async (newTaskData: TaskRequest) => {
+export const createTask = async (newTaskData: TaskRequest): Promise<CreateUpdateTaskResponse> => {
   try {
-    await fetch('https://easydev.club/api/v1/todos', {
+    const response = await fetch(`${BASE_URL}/todos`, {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -25,15 +25,19 @@ export const createTask = async (newTaskData: TaskRequest) => {
       },
       body: JSON.stringify(newTaskData),
     })
+
+    return await response.json()
   } catch (error) {
     throw error
   }
 }
 
-export const updateTask = async (taskDataToSend: TaskRequest) => {
+export const updateTask = async (
+  taskDataToSend: TaskRequest,
+): Promise<CreateUpdateTaskResponse> => {
   const { id, isDone, title } = taskDataToSend
   try {
-    await fetch(`https://easydev.club/api/v1/todos/${id}`, {
+    const response = await fetch(`${BASE_URL}/todos/${id}`, {
       method: 'PUT',
       headers: {
         accept: 'application/json',
@@ -41,14 +45,16 @@ export const updateTask = async (taskDataToSend: TaskRequest) => {
       },
       body: JSON.stringify({ title, isDone }),
     })
+
+    return await response.json()
   } catch (error) {
     throw error
   }
 }
 
-export const deleteTask = async (id: number) => {
+export const deleteTask = async (id: number): Promise<void> => {
   try {
-    await fetch(`https://easydev.club/api/v1/todos/${id}`, {
+    await fetch(`${BASE_URL}/todos/${id}`, {
       method: 'DELETE',
       headers: {
         accept: 'application/json',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TABS } from '@/helpers/helpers.ts'
+import { TASK_FILTERS } from '@/helpers/consts.ts'
 import type { TaskStatus } from '@/types/task.ts'
 import type { TabsProps } from '@/types/tab.ts'
 
@@ -28,13 +28,13 @@ const handleTabClick = (tab: TabsProps) => {
       :class="[
         size,
         {
-          active: activeTab === TABS[value.id].status,
+          active: activeTab === TASK_FILTERS[value.id].status,
           disabled: value.disabled,
         },
       ]"
       @click="handleTabClick(value)"
     >
-      {{ TABS[value.id].title }} <span>{{ value.label }}</span>
+      {{ TASK_FILTERS[value.id].title }} <span>{{ value.label }}</span>
     </li>
   </ul>
 </template>
