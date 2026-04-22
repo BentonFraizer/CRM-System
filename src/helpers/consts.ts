@@ -1,3 +1,8 @@
+import type { Rule } from 'ant-design-vue/es/form'
+
+const MIN_TITLE_LENGTH = 2
+const MAX_TITLE_LENGTH = 64
+
 export const TASK_FILTERS = {
   all: {
     status: 'all',
@@ -14,3 +19,18 @@ export const TASK_FILTERS = {
 } as const
 
 export const BASE_URL = 'https://easydev.club/api/v1'
+
+export const createEditTaskRules: Record<string, Rule[]> = {
+  title: [
+    {
+      validator: async (_, value) => {
+        if (!value || !value.trim()) {
+          throw new Error('Это поле не может быть пустым')
+        }
+      },
+      trigger: 'change',
+    },
+    { min: MIN_TITLE_LENGTH, message: 'Минимальная длина текста 2 символа', trigger: 'blur' },
+    { max: MAX_TITLE_LENGTH, message: 'Максимальная длина текста 64 символа', trigger: 'blur' },
+  ],
+}

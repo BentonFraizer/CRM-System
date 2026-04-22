@@ -1,21 +1,8 @@
 import { getTasks } from '@/api/tasksApi.ts'
 import type { Ref } from 'vue'
 import type { TaskStatus } from '@/types/task.ts'
-
-export const validateTaskTitle = (title: string): string => {
-  let errorMessage = ''
-  const MIN_TITLE_LENGTH = 2
-  const MAX_TITLE_LENGTH = 64
-  if (title.length === 0) {
-    errorMessage = 'Это поле не может быть пустым'
-  } else if (title.length < MIN_TITLE_LENGTH) {
-    errorMessage = 'Минимальная длина текста 2 символа'
-  } else if (title.length > MAX_TITLE_LENGTH) {
-    errorMessage = 'Максимальная длина текста 64 символа'
-  }
-
-  return errorMessage
-}
+import { notification } from 'ant-design-vue'
+import type { NotificationTypes } from '@/types/notification.ts'
 
 export const loadTasks = async (
   status: TaskStatus,
@@ -31,4 +18,11 @@ export const loadTasks = async (
   } finally {
     isLoading.value = false
   }
+}
+
+export const openNotificationWithIcon = (type: NotificationTypes, message: string) => {
+  notification[type]({
+    message: message,
+    placement: 'bottomLeft',
+  })
 }
