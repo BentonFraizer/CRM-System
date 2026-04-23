@@ -115,7 +115,11 @@ const handleCancelEdit = () => {
 
     <template v-else>
       <div class="tasks-list__left">
-        <a-checkbox :checked="task.isDone" @change="handleUpdateTask(task, true)">
+        <a-checkbox
+          :checked="task.isDone"
+          @change="handleUpdateTask(task, true)"
+          :class="{ checked: task.isDone }"
+        >
           {{ task.title }}
         </a-checkbox>
       </div>
@@ -140,8 +144,6 @@ const handleCancelEdit = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 450px;
-  height: 40px;
   background-color: var(--bg-base);
   border-radius: 10px;
   padding: 10px;
@@ -168,5 +170,9 @@ const handleCancelEdit = () => {
 .tasks-list__left {
   display: flex;
   align-items: center;
+}
+
+.checked {
+  text-decoration: line-through;
 }
 </style>

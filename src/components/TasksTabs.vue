@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { TaskInfo, TaskStatus } from '@/types/task.ts'
-import Tabs from '@/ui/Tabs.vue'
 import type { TabsProps } from '@/types/tab.ts'
 import { computed } from 'vue'
+import { TASK_FILTERS } from '@/helpers/consts.ts'
 
 const { tabsData, activeTab } = defineProps<{
   tabsData: TaskInfo
@@ -31,7 +31,17 @@ const onTabClicked = (status: TaskStatus) => {
 </script>
 
 <template>
-  <Tabs :tabs="tabsItems" :active-tab="activeTab" @on-tab-click="onTabClicked" />
+  <a-tabs :activeKey="activeTab" centered @change="onTabClicked" type="card" class="tabs">
+    <a-tab-pane
+      v-for="tab in tabsItems"
+      :key="tab.id"
+      :tab="TASK_FILTERS[tab.id].title + ' ' + tab.label"
+    />
+  </a-tabs>
 </template>
 
-<style scoped></style>
+<style scoped>
+.tabs {
+  width: 100%;
+}
+</style>
