@@ -1,19 +1,45 @@
 :root {
-  --primary-bg-color: #FFFFFF;
-  --secondary-bg-color: #EFEFEF;
+  --primary: #1677ff;
+  --primary-hover: #4096ff;
+  --danger: #ff4d4f;
+  --danger-hover: #ff7875;
+  --success: #52c41a;
 
-  --primary-color: #FFFFFF;
-  --secondary-color: #808080;
-  --error-color: #FF0000;
+  /* Background */
+  --bg-base: #FFFFFF;
+  --bg-primary: #EFEFEF;
 
-  --primary-tab-bg-color: #D3D3D3;
-  --on-primary-tab-bg-color: #B7B7B7;
-  --active-tab-bg-color: #727272;
+  --bg-tab: #D3D3D3;
+  --bg-tab-hover: #B7B7B7;
+  --bg-tab-active: #727272;
 
-  --primary-btn-bg-color: #5393FF;
-  --on-primary-btn-bg-color: #4C86E8;
-  --danger-btn-bg-color: #FF0000;
-  --success-btn-bg-color: #22BB33;
+  --bg-checkbox-disabled: #e1e1e1;
+
+  /* Border */
+  --border: #808080;
+  --border-disabled: #D9D9D9;
+
+  /* Text */
+  --text-base: #000000;
+  --text-white: #FFFFFF;
+  --text-disabled: rgba(0, 0, 0, 0.25);
+
+  /* Button */
+  --bg-btn-disabled: #F5F5F5;
+  --bg-icon-btn-disabled: #e1e1e1;
+  --bg-btn-default: #FFFFFF;
+  --bg-btn-default-hover: #E3E3E3;
+  --border-btn-default: #d9d9d9;
+  --border-btn-default-hover: #4096ff;
+  --text-btn-default-hover: #4096ff;
+
+  --bg-btn-primary: var(--primary);
+  --bg-btn-primary-hover: var(--primary-hover);
+  --text-btn-primary: var(--text-white);
+
+  --bg-btn-danger: var(--danger);
+  --bg-btn-danger-hover: var(--danger-hover);
+  --text-btn-danger: var(--text-white);
 }
 
 body {
@@ -27,4 +53,9 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
+}
+
+button {
+  cursor: pointer;
+  border: none;
 }

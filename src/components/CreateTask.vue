@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { createTask } from '@/api/tasksApi.js'
-import { validateTaskTitle } from '@/helpers/helpers.js'
+import { createTask } from '@/api/tasksApi.ts'
+import { validateTaskTitle } from '@/helpers/helpers.ts'
+import Button from '@/ui/Button.vue'
+import Input from '@/ui/Input.vue'
 
-const emit = defineEmits(['taskCreated'])
+const emit = defineEmits<{
+  taskCreated: []
+}>()
 
-const newTaskTitle = ref('')
-const errorMessage = ref('')
+const newTaskTitle = ref<string>('')
+const errorMessage = ref<string>('')
 
 const handleAddTask = async () => {
   errorMessage.value = validateTaskTitle(newTaskTitle.value)
@@ -32,52 +36,22 @@ const handleAddTask = async () => {
 
 <template>
   <form @submit.prevent="handleAddTask" class="add-task">
-    <div class="input-wrapper">
-      <input type="text" placeholder="Task To Be Done" v-model.trim="newTaskTitle" />
-      <span class="error-message">{{ errorMessage }}</span>
-    </div>
-    <button type="submit">Создать</button>
+    <Input
+      type="text"
+      placeholder="Task To Be Done"
+      v-model:value.trim="newTaskTitle"
+      :error-message="errorMessage"
+      size="large"
+      class-name="border-bottom"
+    />
+    <Button html-type="submit" type="primary" size="large">Создать</Button>
   </form>
 </template>
 
 <style scoped>
-/* Добавление задачи */
 .add-task {
   width: 100%;
   display: flex;
   gap: 10px;
-
-  & input {
-    padding: 10px 5px;
-    border: 0;
-    border-bottom: 2px solid var(--secondary-color);
-  }
-
-  & button {
-    cursor: pointer;
-    background-color: var(--primary-btn-bg-color);
-    border: none;
-    border-radius: 10px;
-    color: var(--primary-color);
-    padding: 5px 30px;
-    font-size: 20px;
-  }
-
-  & button:hover {
-    background-color: var(--on-primary-tab-bg-color);
-  }
-}
-
-.input-wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.error-message {
-  color: var(--error-color);
-  font-size: 14px;
-  height: 16px;
 }
 </style>
