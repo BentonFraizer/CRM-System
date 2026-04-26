@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { TASK_FILTERS } from '@/helpers/consts.ts'
 import CreateTask from '@/components/CreateTask.vue'
 import TasksTabs from '@/components/TasksTabs.vue'
@@ -9,26 +9,39 @@ import type { Task, TaskInfo, TaskStatus } from '@/types/task.ts'
 import { loadTasks } from '@/helpers/helpers.ts'
 import AppLayout from '@/layouts/AppLayout.vue'
 
+const INTERVAL = 5000
 const tasksInfo = ref<MetaResponse<Task, TaskInfo>>()
-const isLoading = ref<boolean>(false)
 const activeTab = ref<TaskStatus>(TASK_FILTERS.all.status)
+const intervalId = ref<ReturnType<typeof setInterval>>()
 
 const onTabClick = async (status: TaskStatus) => {
   activeTab.value = status
   tasksInfo.value = await loadTasks(
     activeTab.value,
-    isLoading,
     'Не удалось загрузить список задач для вкладки',
   )
 }
 
+const loadTasksCallback = async () => {
+  tasksInfo.value = await loadTasks(activeTab.value, 'Не удалось загрузить список задач')
+}
+
+const onChangeTaskEditMode = (isEditMode: boolean) => {
+  isEditMode
+    ? clearInterval(intervalId.value)
+    : (intervalId.value = setInterval(async () => loadTasksCallback(), INTERVAL))
+}
+
 const onUpdateTasks = async () => {
-  tasksInfo.value = await loadTasks(activeTab.value, isLoading, 'Не удалось обновить список задач')
+  tasksInfo.value = await loadTasks(activeTab.value, 'Не удалось обновить список задач')
 }
 
 onMounted(async () => {
-  tasksInfo.value = await loadTasks(activeTab.value, isLoading, 'Не удалось загрузить список задач')
+  await loadTasksCallback()
+  intervalId.value = setInterval(async () => loadTasksCallback(), INTERVAL)
 })
+
+onUnmounted(() => clearInterval(intervalId.value))
 </script>
 
 <template>
@@ -43,12 +56,12 @@ onMounted(async () => {
         @tab-clicked="onTabClick"
       />
 
-      <div v-if="isLoading">Loading...</div>
-
       <TasksList
-        v-else-if="tasksInfo?.data && tasksInfo?.data.length > 0"
+        v-if="tasksInfo?.data && tasksInfo?.data.length > 0"
         :tasks-data="tasksInfo?.data"
         @task-updated="onUpdateTasks"
+        @task-in-edit-mode="onChangeTaskEditMode(true)"
+        @task-exit-edit-mode="onChangeTaskEditMode(false)"
       />
 
       <div v-else>Список пуст</div>

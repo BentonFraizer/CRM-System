@@ -17,6 +17,8 @@ defineProps<{
 }>()
 const emit = defineEmits<{
   taskUpdated: []
+  taskInEditMode: []
+  taskExitEditMode: []
 }>()
 
 interface FormState {
@@ -34,6 +36,7 @@ const handleUpdateTask = async (taskData: Task, isOnlyToggleCheckbox = false) =>
   // Выход из режима редактирования если в заголовок задачи не было внесено изменений
   if (formState.title === taskData.title && !isOnlyToggleCheckbox) {
     isEdit.value = false
+    emit('taskExitEditMode')
     return
   }
 
@@ -55,6 +58,7 @@ const handleUpdateTask = async (taskData: Task, isOnlyToggleCheckbox = false) =>
     openNotificationWithIcon('success', 'Задача успешно обновлена')
 
     if (!isOnlyToggleCheckbox) {
+      emit('taskExitEditMode')
       resetForm()
     }
   } catch (error) {
@@ -81,11 +85,13 @@ const handleDeleteTask = async (id: number) => {
 const handleEdit = (taskData: Task) => {
   isEdit.value = true
   formState.title = taskData.title
+  emit('taskInEditMode')
 }
 
 const handleCancelEdit = () => {
   isEdit.value = false
   formState.title = ''
+  emit('taskExitEditMode')
 }
 </script>
 

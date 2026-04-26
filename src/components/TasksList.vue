@@ -7,6 +7,8 @@ const { tasksData } = defineProps<{
 }>()
 defineEmits<{
   taskUpdated: []
+  taskInEditMode: []
+  taskExitEditMode: []
 }>()
 </script>
 
@@ -17,6 +19,8 @@ defineEmits<{
       :task="task"
       :key="task.id"
       @task-updated="$emit('taskUpdated')"
+      @task-in-edit-mode="$emit('taskInEditMode')"
+      @task-exit-edit-mode="$emit('taskExitEditMode')"
     />
   </ul>
 </template>
