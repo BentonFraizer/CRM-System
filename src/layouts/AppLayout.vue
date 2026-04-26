@@ -1,21 +1,26 @@
 <script setup lang="ts">
-import { ref, reactive, h } from 'vue'
+import { ref, reactive, h, computed } from 'vue'
 import { FolderTwoTone, HomeTwoTone } from '@ant-design/icons-vue'
+import { useRoute } from 'vue-router'
+import router from '@/router'
 
-const selectedKeys = ref<string[]>(['1'])
+const route = useRoute()
+const currentPath = computed(() => route.path)
+
+const selectedKeys = ref<string[]>([currentPath.value])
 
 const items = reactive([
   {
-    key: '1',
+    key: '/',
     icon: () => h(HomeTwoTone),
     label: 'Список задач',
-    onClick: () => console.log('Список задач clicked'),
+    onClick: () => router.push('/'),
   },
   {
-    key: '2',
+    key: '/profile',
     icon: () => h(FolderTwoTone),
     label: 'Профиль',
-    onClick: () => console.log('Профиль clicked'),
+    onClick: () => router.push('/profile'),
   },
 ])
 </script>

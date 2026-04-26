@@ -7,7 +7,7 @@ import TasksList from '@/components/TasksList.vue'
 import type { MetaResponse } from '@/types/api.ts'
 import type { Task, TaskInfo, TaskStatus } from '@/types/task.ts'
 import { loadTasks } from '@/helpers/helpers.ts'
-import Layout from '@/layouts/Layout.vue'
+import AppLayout from '@/layouts/AppLayout.vue'
 
 const tasksInfo = ref<MetaResponse<Task, TaskInfo>>()
 const isLoading = ref<boolean>(false)
@@ -32,7 +32,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <layout>
+  <AppLayout>
     <div class="container">
       <CreateTask @task-created="onUpdateTasks" />
 
@@ -53,7 +53,7 @@ onMounted(async () => {
 
       <div v-else>Список пуст</div>
     </div>
-  </layout>
+  </AppLayout>
 </template>
 
 <style scoped>
