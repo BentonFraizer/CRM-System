@@ -52,14 +52,13 @@ const resetForm = () => {
     layout="inline"
     :rules="createEditTaskRules"
     class="add-task"
+    @finish="handleSubmit"
   >
     <a-form-item name="title">
       <a-input v-model:value="formState.title" placeholder="Task To Be Done" />
     </a-form-item>
 
-    <a-button html-type="submit" type="primary" size="large" @click="handleSubmit">
-      Создать
-    </a-button>
+    <a-button html-type="submit" type="primary" size="large">Создать</a-button>
   </a-form>
 </template>
 

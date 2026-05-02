@@ -7,7 +7,11 @@ export const getTasks = async (
   status: TaskStatus = TASK_FILTERS.all.status,
 ): Promise<MetaResponse<Task, TaskInfo>> => {
   try {
-    const response = await axiosApi.get(`/todos?filter=${status}`)
+    const response = await axiosApi.get('/todos', {
+      params: {
+        filter: status,
+      },
+    })
 
     return response.data
   } catch (error) {

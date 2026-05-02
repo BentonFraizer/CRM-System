@@ -98,14 +98,20 @@ const handleCancelEdit = () => {
 <template>
   <li class="task">
     <template v-if="isEdit">
-      <a-form ref="formRef" :model="formState" layout="inline" :rules="createEditTaskRules">
+      <a-form
+        ref="formRef"
+        :model="formState"
+        layout="inline"
+        :rules="createEditTaskRules"
+        @finish="handleUpdateTask(task)"
+      >
         <div class="tasks-list__edit-left">
           <a-form-item name="title">
             <a-input v-model:value="formState.title" />
           </a-form-item>
         </div>
         <div class="tasks-list__right">
-          <a-button html-type="submit" @click="handleUpdateTask(task)">
+          <a-button html-type="submit">
             <template #icon>
               <CheckSquareTwoTone two-tone-color="#52c41a" />
             </template>
