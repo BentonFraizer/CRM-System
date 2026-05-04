@@ -1,106 +1,151 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { validateTaskTitle } from '@/helpers/helpers.ts'
+import { reactive, ref, type UnwrapRef } from 'vue'
+import { openNotificationWithIcon } from '@/helpers/helpers.ts'
 import { updateTask, deleteTask } from '@/api/tasksApi.ts'
 import type { Task } from '@/types/task.ts'
-import Checkbox from '@/ui/Checkbox.vue'
-import IconButton from '@/ui/IconButton.vue'
-import Input from '@/ui/Input.vue'
+import {
+  CheckSquareTwoTone,
+  CloseCircleTwoTone,
+  EditTwoTone,
+  DeleteTwoTone,
+} from '@ant-design/icons-vue'
+import { CREATE_EDIT_TASK_RULES } from '@/helpers/consts.ts'
+import type { FormInstance } from 'ant-design-vue'
 
 defineProps<{
   task: Task
 }>()
 const emit = defineEmits<{
   taskUpdated: []
+  taskInEditMode: []
+  taskExitEditMode: []
 }>()
 
-const isEdit = ref<boolean>(false)
-const editableTaskTitle = ref<string>('')
-const editableTaskErrorMessage = ref<string>('')
+interface FormState {
+  title: string
+}
 
-const handleUpdateTask = async (taskData: Task, isToggleCheckbox = false) => {
+const formRef = ref<FormInstance>()
+const formState: UnwrapRef<FormState> = reactive({
+  title: '',
+})
+
+const isEdit = ref<boolean>(false)
+
+const handleUpdateTask = async (taskData: Task, isOnlyToggleCheckbox = false) => {
   // Выход из режима редактирования если в заголовок задачи не было внесено изменений
-  if (editableTaskTitle.value === taskData.title && !isToggleCheckbox) {
+  if (formState.title === taskData.title && !isOnlyToggleCheckbox) {
     isEdit.value = false
-    editableTaskTitle.value = ''
+    emit('taskExitEditMode')
     return
   }
 
-  editableTaskErrorMessage.value = validateTaskTitle(editableTaskTitle.value)
-  const isTitleValid = !editableTaskErrorMessage.value?.length
-
-  if (isTitleValid || isToggleCheckbox) {
-    try {
-      const taskDataToSend = {
-        id: taskData.id,
-        isDone: isToggleCheckbox ? !taskData.isDone : taskData.isDone,
-        title: editableTaskTitle.value || taskData.title,
-      }
-
-      await updateTask(taskDataToSend)
-
-      isEdit.value = false
-      editableTaskTitle.value = ''
-      emit('taskUpdated')
-    } catch (error) {
-      console.error(error)
-      alert('Не удалось обновить задачу')
-    }
+  const taskDataToSend = {
+    id: taskData.id,
+    isDone: isOnlyToggleCheckbox ? !taskData.isDone : taskData.isDone,
+    title: formState.title || taskData.title,
   }
+
+  try {
+    if (!isOnlyToggleCheckbox) {
+      await formRef.value?.validate()
+    }
+
+    await updateTask(taskDataToSend)
+
+    isEdit.value = false
+    emit('taskUpdated')
+    openNotificationWithIcon('success', 'Задача успешно обновлена')
+
+    if (!isOnlyToggleCheckbox) {
+      emit('taskExitEditMode')
+      resetForm()
+    }
+  } catch (error) {
+    console.log('error:', error)
+    openNotificationWithIcon('error', 'Не удалось обновить задачу')
+  }
+}
+
+const resetForm = () => {
+  formRef.value && formRef.value.resetFields()
 }
 
 const handleDeleteTask = async (id: number) => {
   try {
     await deleteTask(id)
     emit('taskUpdated')
+    openNotificationWithIcon('success', 'Задача успешно удалена')
   } catch (error) {
     console.error(error)
-    alert('Не удалось удалить задачу')
+    openNotificationWithIcon('error', 'Не удалось удалить задачу')
   }
 }
 
 const handleEdit = (taskData: Task) => {
   isEdit.value = true
-  editableTaskTitle.value = taskData.title
+  formState.title = taskData.title
+  emit('taskInEditMode')
 }
 
 const handleCancelEdit = () => {
   isEdit.value = false
-  editableTaskTitle.value = ''
-  editableTaskErrorMessage.value = ''
+  formState.title = ''
+  emit('taskExitEditMode')
 }
 </script>
 
 <template>
   <li class="task">
     <template v-if="isEdit">
-      <form @submit.prevent="handleUpdateTask(task)">
+      <a-form
+        ref="formRef"
+        :model="formState"
+        layout="inline"
+        :rules="CREATE_EDIT_TASK_RULES"
+        @finish="handleUpdateTask(task)"
+      >
         <div class="tasks-list__edit-left">
-          <Input
-            type="text"
-            v-model:value.trim="editableTaskTitle"
-            :error-message="editableTaskErrorMessage"
-          />
+          <a-form-item name="title">
+            <a-input v-model:value="formState.title" />
+          </a-form-item>
         </div>
         <div class="tasks-list__right">
-          <IconButton icon-name="check" type="submit" />
-          <IconButton icon-name="close" @click="handleCancelEdit" />
+          <a-button html-type="submit">
+            <template #icon>
+              <CheckSquareTwoTone two-tone-color="#52c41a" />
+            </template>
+          </a-button>
+          <a-button @click="handleCancelEdit">
+            <template #icon>
+              <CloseCircleTwoTone two-tone-color="#ff4d4f" />
+            </template>
+          </a-button>
         </div>
-      </form>
+      </a-form>
     </template>
 
     <template v-else>
       <div class="tasks-list__left">
-        <Checkbox
-          :id="task.id.toString()"
-          :isChecked="task.isDone"
-          :label="task.title"
+        <a-checkbox
+          :checked="task.isDone"
           @change="handleUpdateTask(task, true)"
-        />
+          :class="{ checked: task.isDone }"
+        >
+          {{ task.title }}
+        </a-checkbox>
       </div>
       <div class="tasks-list__right">
-        <IconButton icon-name="edit" @click="handleEdit(task)" />
-        <IconButton icon-name="trash" @click="handleDeleteTask(task.id)" />
+        <a-button @click="handleEdit(task)">
+          <template #icon>
+            <EditTwoTone two-tone-color="#1677ff" />
+          </template>
+        </a-button>
+        <a-button @click="handleDeleteTask(task.id)">
+          <template #icon>
+            <DeleteTwoTone two-tone-color="#ff4d4f" />
+          </template>
+        </a-button>
       </div>
     </template>
   </li>
@@ -111,8 +156,6 @@ const handleCancelEdit = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 450px;
-  height: 40px;
   background-color: var(--bg-base);
   border-radius: 10px;
   padding: 10px;
@@ -141,9 +184,7 @@ const handleCancelEdit = () => {
   align-items: center;
 }
 
-.error-message {
-  color: var(--danger);
-  font-size: 14px;
-  height: 16px;
+.checked {
+  text-decoration: line-through;
 }
 </style>

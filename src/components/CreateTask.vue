@@ -1,57 +1,74 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { createTask } from '@/api/tasksApi.ts'
-import { validateTaskTitle } from '@/helpers/helpers.ts'
-import Button from '@/ui/Button.vue'
-import Input from '@/ui/Input.vue'
+import { reactive, ref } from 'vue'
+import type { UnwrapRef } from 'vue'
+import type { FormInstance } from 'ant-design-vue'
+import { CREATE_EDIT_TASK_RULES } from '@/helpers/consts.ts'
+import { openNotificationWithIcon } from '@/helpers/helpers.ts'
 
 const emit = defineEmits<{
   taskCreated: []
 }>()
 
-const newTaskTitle = ref<string>('')
-const errorMessage = ref<string>('')
+interface FormState {
+  title: string
+}
 
-const handleAddTask = async () => {
-  errorMessage.value = validateTaskTitle(newTaskTitle.value)
-  const isTitleValid = !errorMessage.value.length
-  if (isTitleValid) {
-    try {
+const formRef = ref<FormInstance>()
+const formState: UnwrapRef<FormState> = reactive({
+  title: '',
+})
+
+const handleSubmit = () => {
+  formRef.value
+    ?.validate()
+    .then(async () => {
       const newTaskData = {
         isDone: false,
-        title: newTaskTitle.value,
+        title: formState.title.trim(),
       }
 
       await createTask(newTaskData)
 
-      newTaskTitle.value = ''
       emit('taskCreated')
-    } catch (error) {
-      console.error(error)
-      alert('Не удалось создать задачу')
-    }
-  }
+      resetForm()
+      openNotificationWithIcon('success', 'Задача успешно создана')
+    })
+    .catch(() => {
+      openNotificationWithIcon('error', 'Не удалось создать задачу')
+    })
+}
+
+const resetForm = () => {
+  formRef.value && formRef.value.resetFields()
 }
 </script>
 
 <template>
-  <form @submit.prevent="handleAddTask" class="add-task">
-    <Input
-      type="text"
-      placeholder="Task To Be Done"
-      v-model:value.trim="newTaskTitle"
-      :error-message="errorMessage"
-      size="large"
-      class-name="border-bottom"
-    />
-    <Button html-type="submit" type="primary" size="large">Создать</Button>
-  </form>
+  <a-form
+    ref="formRef"
+    :model="formState"
+    layout="inline"
+    :rules="CREATE_EDIT_TASK_RULES"
+    class="add-task"
+    @finish="handleSubmit"
+  >
+    <a-form-item name="title">
+      <a-input v-model:value="formState.title" placeholder="Task To Be Done" />
+    </a-form-item>
+
+    <a-button html-type="submit" type="primary" size="large">Создать</a-button>
+  </a-form>
 </template>
 
 <style scoped>
 .add-task {
   width: 100%;
   display: flex;
-  gap: 10px;
+  margin-bottom: 20px;
+
+  & input {
+    width: 275px;
+  }
 }
 </style>
