@@ -3,7 +3,7 @@ import { createTask } from '@/api/tasksApi.ts'
 import { reactive, ref } from 'vue'
 import type { UnwrapRef } from 'vue'
 import type { FormInstance } from 'ant-design-vue'
-import { createEditTaskRules } from '@/helpers/consts.ts'
+import { CREATE_EDIT_TASK_RULES } from '@/helpers/consts.ts'
 import { openNotificationWithIcon } from '@/helpers/helpers.ts'
 
 const emit = defineEmits<{
@@ -34,8 +34,7 @@ const handleSubmit = () => {
       resetForm()
       openNotificationWithIcon('success', 'Задача успешно создана')
     })
-    .catch((error) => {
-      console.log('error: ', error)
+    .catch(() => {
       openNotificationWithIcon('error', 'Не удалось создать задачу')
     })
 }
@@ -50,7 +49,7 @@ const resetForm = () => {
     ref="formRef"
     :model="formState"
     layout="inline"
-    :rules="createEditTaskRules"
+    :rules="CREATE_EDIT_TASK_RULES"
     class="add-task"
     @finish="handleSubmit"
   >

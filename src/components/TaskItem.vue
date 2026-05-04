@@ -9,7 +9,7 @@ import {
   EditTwoTone,
   DeleteTwoTone,
 } from '@ant-design/icons-vue'
-import { createEditTaskRules } from '@/helpers/consts.ts'
+import { CREATE_EDIT_TASK_RULES } from '@/helpers/consts.ts'
 import type { FormInstance } from 'ant-design-vue'
 
 defineProps<{
@@ -102,7 +102,7 @@ const handleCancelEdit = () => {
         ref="formRef"
         :model="formState"
         layout="inline"
-        :rules="createEditTaskRules"
+        :rules="CREATE_EDIT_TASK_RULES"
         @finish="handleUpdateTask(task)"
       >
         <div class="tasks-list__edit-left">

@@ -20,7 +20,7 @@ export const TASK_FILTERS = {
 
 export const BASE_URL = 'https://easydev.club/api/v1'
 
-export const createEditTaskRules: Record<string, Rule[]> = {
+export const CREATE_EDIT_TASK_RULES: Record<string, Rule[]> = {
   title: [
     {
       validator: async (_, value) => {
