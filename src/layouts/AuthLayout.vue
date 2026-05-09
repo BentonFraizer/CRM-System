@@ -1,0 +1,52 @@
+<script setup lang="ts"></script>
+
+<template>
+  <a-layout class="layout">
+    <a-layout class="image">
+      <a-image src="/src/assets/images/auth-bg.png" :preview="false" class="auth-image" />
+    </a-layout>
+
+    <a-layout class="content">
+      <a-layout-content>
+        <slot />
+      </a-layout-content>
+    </a-layout>
+  </a-layout>
+</template>
+
+<style scoped>
+.layout {
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.image {
+  width: 60%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #ffe6c9;
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  width: 40%;
+  height: 100vh;
+  overflow: auto;
+}
+
+.auth-image {
+  width: 100%;
+  height: 100%;
+}
+
+.auth-image :deep(.ant-image-img) {
+  width: 100%;
+  height: 100vh;
+  object-fit: contain;
+  display: block;
+}
+</style>
