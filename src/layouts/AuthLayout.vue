@@ -7,7 +7,7 @@
     </a-layout>
 
     <a-layout class="content">
-      <a-layout-content>
+      <a-layout-content class="layout-content">
         <slot />
       </a-layout-content>
     </a-layout>
@@ -36,6 +36,13 @@
   width: 40%;
   height: 100vh;
   overflow: auto;
+}
+
+.layout-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .auth-image {

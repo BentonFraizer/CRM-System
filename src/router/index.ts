@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import TodoListView from '@/pages/TodoListView.vue'
 import ProfileView from '@/pages/ProfileView.vue'
 import RegistrationVue from '@/pages/RegistrationVue.vue'
+import LoginVue from '@/pages/LoginVue.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,6 +11,7 @@ const router = createRouter({
     { path: '/', component: TodoListView },
     { path: '/profile', component: ProfileView },
     { path: '/registration', component: RegistrationVue },
+    { path: '/login', component: LoginVue },
   ],
 })
 
