@@ -1,9 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import authBg from '@/assets/images/auth-bg.png'
+</script>
 
 <template>
   <a-layout class="layout">
     <a-layout class="image">
-      <a-image src="/src/assets/images/auth-bg.png" :preview="false" class="auth-image" />
+      <a-image :src="authBg" :preview="false" class="auth-image" />
     </a-layout>
 
     <a-layout class="content">

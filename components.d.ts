@@ -11,11 +11,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ABadge: typeof import('ant-design-vue/es')['Badge']
     AButton: typeof import('ant-design-vue/es')['Button']
     ACheckbox: typeof import('ant-design-vue/es')['Checkbox']
-    ADescriptions: typeof import('ant-design-vue/es')['Descriptions']
-    ADescriptionsItem: typeof import('ant-design-vue/es')['DescriptionsItem']
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AImage: typeof import('ant-design-vue/es')['Image']
@@ -23,11 +20,8 @@ declare module 'vue' {
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     ALayout: typeof import('ant-design-vue/es')['Layout']
     ALayoutContent: typeof import('ant-design-vue/es')['LayoutContent']
-    ALayoutFooter: typeof import('ant-design-vue/es')['LayoutFooter']
-    ALayoutHeader: typeof import('ant-design-vue/es')['LayoutHeader']
     ALayoutSider: typeof import('ant-design-vue/es')['LayoutSider']
     AMenu: typeof import('ant-design-vue/es')['Menu']
-    AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
     AResult: typeof import('ant-design-vue/es')['Result']
     ATabPane: typeof import('ant-design-vue/es')['TabPane']
     ATabs: typeof import('ant-design-vue/es')['Tabs']
