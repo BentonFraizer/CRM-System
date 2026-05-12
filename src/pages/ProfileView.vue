@@ -3,6 +3,9 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import { logout } from '@/api/authApi.ts'
 import router from '@/router'
 import { openNotificationWithIcon } from '@/helpers/helpers.ts'
+import { useUserStore } from '@/stores/user.ts'
+
+const userStore = useUserStore()
 
 const handleLogout = async () => {
   try {
@@ -16,16 +19,46 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <AppLayout
-    ><h3 class="heading">Привет!</h3>
-    <a-button @click="handleLogout">Выйти</a-button>
+  <AppLayout>
+    <a-layout class="container">
+      <a-button class="logout-btn" type="primary" @click="handleLogout">Выйти</a-button>
+      <a-form
+        class="form"
+        name="basic"
+        :label-col="{ span: 8 }"
+        :wrapper-col="{ span: 16 }"
+        autocomplete="off"
+      >
+        <a-form-item label="Имя пользователя" name="username">
+          <a-input :value="userStore.userProfileData?.username" />
+        </a-form-item>
+
+        <a-form-item label="Почтовый адрес" name="email">
+          <a-input :value="userStore.userProfileData?.email" />
+        </a-form-item>
+
+        <a-form-item label="Телефон" name="phone">
+          <a-input :value="userStore.userProfileData?.phoneNumber" />
+        </a-form-item>
+      </a-form>
+    </a-layout>
   </AppLayout>
 </template>
 
 <style scoped>
-.heading {
+.container {
+  padding: 50px;
+}
+
+.logout-btn {
+  align-self: flex-end;
+  width: 100px;
+  margin-bottom: 50px;
+}
+
+.form {
+  width: 50%;
   display: flex;
-  justify-content: center;
-  margin: 50px;
+  flex-direction: column;
 }
 </style>
