@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance } from 'axios'
 import { BASE_URL } from '@/helpers/consts.ts'
+import { useAuthStore } from '@/stores/auth.ts'
 
 const axiosApi: AxiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -11,3 +12,13 @@ const axiosApi: AxiosInstance = axios.create({
 })
 
 export default axiosApi
+
+axiosApi.interceptors.request.use((config) => {
+  const authStore = useAuthStore()
+  const accessToken = authStore.getAccessToken
+
+  if (accessToken) {
+    config.headers.set('Authorization', `Bearer ${accessToken}`)
+  }
+  return config
+})

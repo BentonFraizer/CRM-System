@@ -17,3 +17,13 @@ export interface Profile {
   roles: Role[]
   phoneNumber: string
 }
+
+export interface AuthData {
+  login: string
+  password: string
+}
+
+export interface Token {
+  accessToken: string
+  refreshToken: string
+}

@@ -132,3 +132,20 @@ export const REGISTRATION_FORM_RULES: Record<string, Rule[]> = {
     },
   ],
 }
+
+export const AUTHORIZATION_FORM_RULES: Record<string, Rule[]> = {
+  login: [
+    {
+      required: true,
+      message: EMPTY_FIELD_ERROR_TEXT,
+      trigger: 'blur',
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: EMPTY_FIELD_ERROR_TEXT,
+      trigger: 'blur',
+    },
+  ],
+}
