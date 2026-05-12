@@ -19,7 +19,7 @@ const items = reactive([
   {
     key: '/profile',
     icon: () => h(FolderTwoTone),
-    label: 'Профиль',
+    label: 'Личный кабинет',
     onClick: () => router.push('/profile'),
   },
 ])
@@ -43,6 +43,5 @@ const items = reactive([
 <style scoped>
 .layout {
   height: 100vh;
-  background-color: red !important;
 }
 </style>

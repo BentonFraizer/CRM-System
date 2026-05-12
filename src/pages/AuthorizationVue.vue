@@ -7,6 +7,10 @@ import AuthorizationForm from '@/components/AuthorizationForm.vue'
   <AuthLayout>
     <h2 class="heading">Войдите в свой аккаунт</h2>
     <AuthorizationForm />
+    <p>
+      Еще нет аккаунта?
+      <router-link to="/registration">Зарегистрироваться</router-link>
+    </p>
   </AuthLayout>
 </template>
 

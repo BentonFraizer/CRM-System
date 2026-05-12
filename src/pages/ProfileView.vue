@@ -4,12 +4,18 @@ import { logout } from '@/api/authApi.ts'
 import router from '@/router'
 import { openNotificationWithIcon } from '@/helpers/helpers.ts'
 import { useUserStore } from '@/stores/user.ts'
+import { REFRESH_TOKEN_KEY } from '@/helpers/consts.ts'
+import { useAuthStore } from '@/stores/auth.ts'
 
 const userStore = useUserStore()
+const authStore = useAuthStore()
 
 const handleLogout = async () => {
   try {
     await logout()
+    authStore.setAccessToken(null)
+    userStore.setUserProfileData(null)
+    localStorage.removeItem(REFRESH_TOKEN_KEY)
     await router.push('/login')
   } catch (error) {
     console.log('error: ', error)
@@ -25,7 +31,7 @@ const handleLogout = async () => {
       <a-form
         class="form"
         name="basic"
-        :label-col="{ span: 8 }"
+        :label-col="{ span: 5 }"
         :wrapper-col="{ span: 16 }"
         autocomplete="off"
       >

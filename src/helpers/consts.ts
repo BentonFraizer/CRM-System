@@ -13,6 +13,8 @@ const PASSWORD_PATTERN = /^\S+$/
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_PATTERN = /^\+?[0-9]{11}$/
 
+export const REFRESH_TOKEN_KEY = 'refresh_token'
+
 export const TASK_FILTERS = {
   all: {
     status: 'all',
@@ -103,7 +105,7 @@ export const REGISTRATION_FORM_RULES: Record<string, Rule[]> = {
     },
     {
       min: MIN_PASSWORD_LENGTH,
-      message: 'Минимальная длина текста 6 символа',
+      message: 'Минимальная длина текста 6 символов',
       trigger: 'blur',
     },
     {

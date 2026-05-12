@@ -123,6 +123,10 @@ const validateCheckPasswordField = async (_rule: Rule, value: string) => {
   <a-result v-if="isRegistrationSuccess" status="success" title="Регистрация прошла успешно">
     <router-link to="/login">Перейти на страницу авторизации для входа в систему</router-link>
   </a-result>
+  <p v-else>
+    Есть аккаунт?
+    <router-link to="/">Войти</router-link>
+  </p>
 </template>
 
 <style scoped>
