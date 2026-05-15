@@ -11,6 +11,7 @@ export const initAuth = async () => {
 
   if (!refreshToken) {
     authStore.setAccessToken(null)
+    authStore.setIsAuthorized(false)
     userStore.setUserProfileData(null)
     return
   }
@@ -24,9 +25,11 @@ export const initAuth = async () => {
 
     if (newRefreshToken) {
       localStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken)
+      authStore.setIsAuthorized(true)
     }
   } catch {
     authStore.setAccessToken(null)
+    authStore.setIsAuthorized(false)
     userStore.setUserProfileData(null)
     localStorage.removeItem(REFRESH_TOKEN_KEY)
   }

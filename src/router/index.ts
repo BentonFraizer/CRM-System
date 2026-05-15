@@ -30,13 +30,13 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const authStore = useAuthStore()
-  const isAuth = authStore.getAccessToken
+  const isAuthorized = authStore.getIsAuthorized
 
-  if (to.meta.requiresAuth && !isAuth) {
+  if (to.meta.requiresAuth && !isAuthorized) {
     return '/login'
   }
 
-  if (to.path === '/login' && isAuth) {
+  if ((to.path === '/login' || to.path === '/registration') && isAuthorized) {
     return '/'
   }
 })

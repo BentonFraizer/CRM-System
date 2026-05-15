@@ -9,5 +9,19 @@ export const useAuthStore = defineStore('auth', () => {
     accessToken.value = token
   }
 
-  return { accessToken, getAccessToken, setAccessToken }
+  const isAuthorized = ref<boolean>(false)
+  const getIsAuthorized = computed(() => isAuthorized.value)
+
+  function setIsAuthorized(value: boolean) {
+    isAuthorized.value = value
+  }
+
+  return {
+    accessToken,
+    getAccessToken,
+    setAccessToken,
+    isAuthorized,
+    getIsAuthorized,
+    setIsAuthorized,
+  }
 })

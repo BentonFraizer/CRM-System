@@ -14,6 +14,7 @@ const handleLogout = async () => {
   try {
     await logout()
     authStore.setAccessToken(null)
+    authStore.setIsAuthorized(false)
     userStore.setUserProfileData(null)
     localStorage.removeItem(REFRESH_TOKEN_KEY)
     await router.push('/login')
@@ -28,25 +29,18 @@ const handleLogout = async () => {
   <AppLayout>
     <a-layout class="container">
       <a-button class="logout-btn" type="primary" @click="handleLogout">Выйти</a-button>
-      <a-form
-        class="form"
-        name="basic"
-        :label-col="{ span: 5 }"
-        :wrapper-col="{ span: 16 }"
-        autocomplete="off"
-      >
-        <a-form-item label="Имя пользователя" name="username">
-          <a-input :value="userStore.userProfileData?.username" />
-        </a-form-item>
-
-        <a-form-item label="Почтовый адрес" name="email">
-          <a-input :value="userStore.userProfileData?.email" />
-        </a-form-item>
-
-        <a-form-item label="Телефон" name="phone">
-          <a-input :value="userStore.userProfileData?.phoneNumber" />
-        </a-form-item>
-      </a-form>
+      <a-space direction="horizontal" class="space-item">
+        <a-typography-text strong class="label">Имя пользователя:</a-typography-text>
+        <a-typography-text>{{ userStore.userProfileData?.username }}</a-typography-text>
+      </a-space>
+      <a-space direction="horizontal" class="space-item">
+        <a-typography-text strong class="label">Почтовый адрес:</a-typography-text>
+        <a-typography-text>{{ userStore.userProfileData?.email }}</a-typography-text>
+      </a-space>
+      <a-space direction="horizontal" class="space-item">
+        <a-typography-text strong class="label">Телефон:</a-typography-text>
+        <a-typography-text>{{ userStore.userProfileData?.phoneNumber }}</a-typography-text>
+      </a-space>
     </a-layout>
   </AppLayout>
 </template>
@@ -62,9 +56,12 @@ const handleLogout = async () => {
   margin-bottom: 50px;
 }
 
-.form {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
+.label {
+  display: block;
+  width: 140px;
+}
+
+.space-item {
+  margin-bottom: 5px;
 }
 </style>

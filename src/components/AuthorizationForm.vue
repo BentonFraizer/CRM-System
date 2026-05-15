@@ -38,6 +38,7 @@ const handleSubmit = () => {
 
       const tokens = await login(authUserData)
       authStore.setAccessToken(tokens.accessToken)
+      authStore.setIsAuthorized(true)
       localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
 
       const userProfileData = await getUserProfileData()
