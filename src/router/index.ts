@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import TodoListView from '@/pages/TodoListView.vue'
 import ProfileView from '@/pages/ProfileView.vue'
-import RegistrationVue from '@/pages/RegistrationVue.vue'
-import AuthorizationVue from '@/pages/AuthorizationVue.vue'
+import RegistrationView from '@/pages/RegistrationView.vue'
+import AuthorizationView from '@/pages/AuthorizationView.vue'
 import { useAuthStore } from '@/stores/auth.ts'
 
 const router = createRouter({
@@ -23,8 +23,8 @@ const router = createRouter({
         requiresAuth: true,
       },
     },
-    { path: '/registration', component: RegistrationVue },
-    { path: '/login', component: AuthorizationVue },
+    { path: '/registration', component: RegistrationView },
+    { path: '/login', component: AuthorizationView },
   ],
 })
 
