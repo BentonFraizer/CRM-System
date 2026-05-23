@@ -45,13 +45,13 @@ const items = reactive([
 </script>
 
 <template>
-  <a-layout class="layout">
-    <a-layout-sider breakpoint="lg" collapsed-width="0">
+  <a-layout>
+    <a-layout-sider class="fixed-sider" breakpoint="lg" collapsed-width="0">
       <div class="logo" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" :items="items">
       </a-menu>
     </a-layout-sider>
-    <a-layout>
+    <a-layout class="right-layout">
       <a-layout-content>
         <slot></slot>
       </a-layout-content>
@@ -60,8 +60,18 @@ const items = reactive([
 </template>
 
 <style scoped>
-.layout {
+.fixed-sider {
+  overflow: auto;
   height: 100vh;
-  background-color: red !important;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.right-layout {
+  margin-left: 200px;
+  overflow: auto;
+  height: 100vh;
 }
 </style>
