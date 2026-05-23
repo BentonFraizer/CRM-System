@@ -1,0 +1,25 @@
+export type Role = 'ADMIN' | 'USER' | 'MODERATOR'
+
+export interface Profile {
+  id: number
+  username: string
+  email: string
+  date: string
+  isBlocked: boolean
+  roles: Role[]
+  phoneNumber: string
+}
+
+export interface AuthData {
+  login: string
+  password: string
+}
+
+export interface Token {
+  accessToken: string
+  refreshToken: string
+}
+
+export interface RefreshToken {
+  refreshToken: string
+}

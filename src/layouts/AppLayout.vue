@@ -1,8 +1,21 @@
 <script setup lang="ts">
 import { ref, reactive, h, computed } from 'vue'
-import { FolderTwoTone, HomeTwoTone } from '@ant-design/icons-vue'
+import { FolderTwoTone, HomeTwoTone, IdcardTwoTone } from '@ant-design/icons-vue'
 import { useRoute } from 'vue-router'
 import router from '@/router'
+import { useUserStore } from '@/stores/user.ts'
+import { hasUserRole } from '@/helpers/helpers.ts'
+import { USER_ROLES } from '@/helpers/consts.ts'
+
+const userStore = useUserStore()
+const userData = userStore.getUserProfileData
+
+let isUserAdmin = false
+let isUserModerator = false
+if (userData?.roles.length) {
+  isUserAdmin = hasUserRole(userData?.roles, USER_ROLES.ADMIN)
+  isUserModerator = hasUserRole(userData?.roles, USER_ROLES.MODERATOR)
+}
 
 const route = useRoute()
 const currentPath = computed(() => route.path)
@@ -21,6 +34,12 @@ const items = reactive([
     icon: () => h(FolderTwoTone),
     label: 'Профиль',
     onClick: () => router.push('/profile'),
+  },
+  (isUserAdmin || isUserModerator) && {
+    key: '/users',
+    icon: () => h(IdcardTwoTone),
+    label: 'Пользователи',
+    onClick: () => router.push('/users'),
   },
 ])
 </script>

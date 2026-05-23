@@ -18,3 +18,12 @@ export interface CreateUpdateTaskResponse {
   isDone: boolean
   created: string
 }
+
+export interface UserMetaResponse<T> {
+  data: T[]
+  meta: {
+    totalAmount: number
+    sortBy: string
+    sortOrder: 'asc' | 'desc'
+  }
+}
