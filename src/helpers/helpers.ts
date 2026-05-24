@@ -23,5 +23,11 @@ export const openNotificationWithIcon = (type: NotificationTypes, message: strin
 export const hasUserRole = (currenUserRoles: Role[], roleToCheck: Role) => {
   return currenUserRoles.includes(roleToCheck)
 }
-// FIXME: пример использования. Удалить перед коммитом
-// const userRoles = ['USER', 'ADMIN'] as Role[]
+
+export const formatIsoDate = (isoDate: string): string => {
+  return new Date(isoDate).toLocaleString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+}
