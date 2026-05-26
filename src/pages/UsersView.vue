@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, h } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
-import type { Profile } from '@/types/auth.ts'
+import type { Profile, Role } from '@/types/auth.ts'
 import type { TableProps } from 'ant-design-vue'
-import { getAllUsers } from '@/api/adminApi.ts'
-import { formatIsoDate, hasUserRole } from '@/helpers/helpers.ts'
+import { blockUser, editUserRights, getAllUsers, unblockUser } from '@/api/adminApi.ts'
+import { formatIsoDate, hasUserRole, openNotificationWithIcon } from '@/helpers/helpers.ts'
 import { useUserStore } from '@/stores/user.ts'
 import { USER_ROLES } from '@/helpers/consts.ts'
 import {
@@ -12,7 +12,10 @@ import {
   SearchOutlined,
   PhoneOutlined,
   MailOutlined,
+  ExclamationCircleOutlined,
+  MoreOutlined,
 } from '@ant-design/icons-vue'
+import { Modal } from 'ant-design-vue'
 
 const userStore = useUserStore()
 const users = ref<Profile[]>()
@@ -20,6 +23,11 @@ const isUserAdminOrModerator = ref<boolean>(false)
 const isUserAdmin = ref<boolean>(false)
 const searchValue = ref<string>('')
 const isLoading = ref<boolean>(true)
+
+const [modal, contextHolder] = Modal.useModal()
+const isChangeUserRightsModalOpen = ref<boolean>(false)
+const selectedUserId = ref<string>('')
+const selectedUserRoles = ref<Role[]>([])
 
 const PAGINATION_SETTINGS = {
   showSizeChanger: false,
@@ -33,7 +41,7 @@ const pagination = ref({
   ...PAGINATION_SETTINGS,
 })
 
-const sortingParams = ref({
+const sortingParams = ref<{ sortBy: string; sortOrder: 'asc' | 'desc' }>({
   sortBy: '',
   sortOrder: 'asc',
 })
@@ -114,17 +122,62 @@ const getUsers = async () => {
   console.log('1. response: ', response)
 }
 
+const handleToggleBlockedUserStatus = (id: string, isBlocked: boolean) => {
+  const modalText = isBlocked ? 'Разблокировать' : 'Заблокировать'
+
+  modal.confirm({
+    title: modalText,
+    icon: h(ExclamationCircleOutlined),
+    cancelText: 'Отмена',
+    content: `Вы действительно хотите ${modalText.toLocaleLowerCase()} пользователя?`,
+    async onOk() {
+      try {
+        const action = isBlocked ? unblockUser : blockUser
+
+        await action(id)
+        await getUsers()
+      } catch (error) {
+        openNotificationWithIcon(
+          'error',
+          `Не удалось ${modalText.toLocaleLowerCase()} пользователя`,
+          error as string,
+        )
+      }
+    },
+    onCancel() {},
+  })
+}
+
+const openChangeUserRightsModal = (id: string, roles: Role[]) => {
+  selectedUserId.value = id
+  selectedUserRoles.value = roles
+  isChangeUserRightsModalOpen.value = true
+}
+
+const handleChangeUserRightsClickOkButton = async () => {
+  try {
+    await editUserRights({ id: selectedUserId.value, roles: selectedUserRoles.value })
+    await getUsers()
+    selectedUserId.value = ''
+    selectedUserRoles.value = []
+    isChangeUserRightsModalOpen.value = false
+  } catch (error) {
+    openNotificationWithIcon('error', 'Не удалось обновить роли', error as string)
+  }
+}
+
 onMounted(async () => {
   await getUsers()
   const userRoles = userStore.getUserProfileData.roles
   isUserAdminOrModerator.value =
     hasUserRole(userRoles, USER_ROLES.ADMIN) || hasUserRole(userRoles, USER_ROLES.MODERATOR)
-  isUserAdmin.value = hasUserRole(userRoles, USER_ROLES.MODERATOR)
+  isUserAdmin.value = hasUserRole(userRoles, USER_ROLES.ADMIN)
 })
 </script>
 
 <template>
   <AppLayout>
+    <contextHolder />
     <div class="header">
       <h3>Пользователи</h3>
       <a-input
@@ -192,23 +245,64 @@ onMounted(async () => {
         <template v-else-if="column.key === 'action' && isUserAdminOrModerator">
           <div class="action-buttons">
             <template v-if="record.isBlocked">
-              <a-button v-show="isUserAdmin">Разблокировать</a-button>
+              <a-button
+                v-show="isUserAdmin"
+                @click="() => handleToggleBlockedUserStatus(record.id, record.isBlocked)"
+              >
+                Разблокировать
+              </a-button>
             </template>
             <template v-else>
-              <a-button danger>Заблокировать</a-button>
+              <a-button
+                danger
+                @click="() => handleToggleBlockedUserStatus(record.id, record.isBlocked)"
+              >
+                Заблокировать
+              </a-button>
             </template>
 
-            <a-tooltip title="Перейти к профилю" placement="topLeft">
-              <a-button
-                :icon="h(ArrowRightOutlined)"
-                @click="$router.push(`/users/${record.id}`)"
-                class="goto-profile-btn"
-              />
-            </a-tooltip>
+            <div class="tooltip-buttons">
+              <a-tooltip title="Перейти к профилю" placement="topLeft">
+                <a-button
+                  :icon="h(ArrowRightOutlined)"
+                  @click="$router.push(`/users/${record.id}`)"
+                  class="goto-profile-btn"
+                />
+              </a-tooltip>
+
+              <a-tooltip
+                title="Изменить роли"
+                placement="topLeft"
+                v-if="isUserAdmin"
+                @click="() => openChangeUserRightsModal(record.id, record.roles)"
+              >
+                <a-button :icon="h(MoreOutlined)" />
+              </a-tooltip>
+            </div>
           </div>
         </template>
       </template>
     </a-table>
+    <a-modal
+      v-model:open="isChangeUserRightsModalOpen"
+      title="Выберите роли"
+      @ok="handleChangeUserRightsClickOkButton"
+      cancel-text="Отмена"
+    >
+      <a-checkbox-group v-model:value="selectedUserRoles" style="width: 100%">
+        <a-row>
+          <a-col :span="8">
+            <a-checkbox value="ADMIN">Админ</a-checkbox>
+          </a-col>
+          <a-col :span="8">
+            <a-checkbox value="MODERATOR">Модератор</a-checkbox>
+          </a-col>
+          <a-col :span="8">
+            <a-checkbox value="USER">Пользователь</a-checkbox>
+          </a-col>
+        </a-row>
+      </a-checkbox-group>
+    </a-modal>
   </AppLayout>
 </template>
 
@@ -238,7 +332,15 @@ onMounted(async () => {
 .action-buttons {
   display: flex;
   justify-content: space-between;
-  max-width: 200px;
+  max-width: 230px;
+  gap: 10px;
+}
+
+.tooltip-buttons {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: end;
 }
 
 .goto-profile-btn :deep(.anticon) {

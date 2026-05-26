@@ -15,6 +15,7 @@ export const initAuth = async () => {
     userStore.setUserProfileData(null)
 
     // TODO: удалить до return после merge в develop
+    // const tokens = await login({ login: 'loginone', password: 'password1' })
     const tokens = await login({ login: 'admin', password: '123456' })
     authStore.setAccessToken(tokens.accessToken)
     const userProfileData = await getUserProfileData()

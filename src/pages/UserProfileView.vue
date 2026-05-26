@@ -46,8 +46,6 @@ const handleSubmit = () => {
         phoneNumber: formState.phoneNumber.trim(),
       }
 
-      console.log('newUserData: ', newUserData)
-
       const updaterUserData = await editUser(newUserData)
       initialization(updaterUserData)
       userData.value = updaterUserData

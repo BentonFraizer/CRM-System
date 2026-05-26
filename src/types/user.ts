@@ -28,3 +28,8 @@ export interface UserRequest {
 export interface UserRequestWithId extends UserRequest {
   id: string
 }
+
+export interface UserRolesRequest {
+  id: string
+  roles: Role[]
+}
