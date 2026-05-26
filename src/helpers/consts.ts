@@ -1,7 +1,13 @@
 import type { Rule } from 'ant-design-vue/es/form'
 
+export const EMPTY_FIELD_ERROR_TEXT = 'Это поле не может быть пустым'
 const MIN_TITLE_LENGTH = 2
 const MAX_TITLE_LENGTH = 64
+const MIN_USERNAME_LENGTH = 1
+const MAX_FORM_FIELDS_LENGTH = 60
+const USERNAME_PATTERN = /^[a-zA-Zа-яА-ЯёЁ]+$/
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PHONE_PATTERN = /^\+?[0-9]{11}$/
 
 export const TASK_FILTERS = {
   all: {
@@ -35,5 +41,49 @@ export const CREATE_EDIT_TASK_RULES: Record<string, Rule[]> = {
     },
     { min: MIN_TITLE_LENGTH, message: 'Минимальная длина текста 2 символа', trigger: 'blur' },
     { max: MAX_TITLE_LENGTH, message: 'Максимальная длина текста 64 символа', trigger: 'blur' },
+  ],
+}
+
+export const EDIT_USER_PROFILE_FORM_RULES: Record<string, Rule[]> = {
+  username: [
+    {
+      required: true,
+      message: EMPTY_FIELD_ERROR_TEXT,
+      trigger: 'change',
+    },
+    {
+      pattern: USERNAME_PATTERN,
+      message: 'Можно использовать только русские или латинские буквы (без пробелов)',
+      trigger: 'change',
+    },
+    {
+      min: MIN_USERNAME_LENGTH,
+      message: 'Минимальная длина текста 1 символ',
+      trigger: 'blur',
+    },
+    {
+      max: MAX_FORM_FIELDS_LENGTH,
+      message: 'Максимальная длина текста 60 символов',
+      trigger: 'blur',
+    },
+  ],
+  email: [
+    {
+      required: true,
+      message: EMPTY_FIELD_ERROR_TEXT,
+      trigger: 'change',
+    },
+    {
+      pattern: EMAIL_PATTERN,
+      message: 'Введите валидный email',
+      trigger: 'blur',
+    },
+  ],
+  phoneNumber: [
+    {
+      pattern: PHONE_PATTERN,
+      message: 'Введите номер телефона в формате +79998887766',
+      trigger: 'blur',
+    },
   ],
 }
