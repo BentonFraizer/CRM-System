@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { useRoute } from 'vue-router'
 import { onMounted, ref, reactive, type UnwrapRef } from 'vue'
-import type { User, UserRequest } from '@/types/user.ts'
+import type { User, UserRequest, UserRequestWithId } from '@/types/user.ts'
 import { editUser, getUserById } from '@/api/adminApi.ts'
 import type { FormInstance } from 'ant-design-vue'
 import { openNotificationWithIcon } from '@/helpers/helpers.ts'
@@ -10,45 +10,72 @@ import { EDIT_USER_PROFILE_FORM_RULES } from '@/helpers/consts.ts'
 
 const route = useRoute()
 
+const userId = ref<string>(route.params.id as string)
 const userData = ref<User | null>(null)
 const isEditMode = ref<boolean>(false)
 
 const isRequestInProgress = ref<boolean>(false)
 
-const initialFormState = ref<UserRequest>({
+const initialFormState = ref<Required<UserRequest>>({
   username: '',
   email: '',
   phoneNumber: '',
 })
-
-interface FormEditUserState {
-  username: string
-  email: string
-  phoneNumber: string
-}
 
 const formRef = ref<FormInstance>()
-const formState: UnwrapRef<FormEditUserState> = reactive({
+const formState: UnwrapRef<Required<UserRequest>> = reactive({
   username: '',
   email: '',
   phoneNumber: '',
 })
+
+// Функция для проверки наличия измененных полей в форме
+const getChangedUserFields = (
+  currentData: Required<UserRequest>,
+  initialData: Required<UserRequest>,
+): UserRequest => {
+  const changedFields: UserRequest = {}
+
+  if (currentData.username !== initialData.username) {
+    changedFields.username = currentData.username
+  }
+
+  if (currentData.email !== initialData.email) {
+    changedFields.email = currentData.email
+  }
+
+  if (currentData.phoneNumber !== initialData.phoneNumber) {
+    changedFields.phoneNumber = currentData.phoneNumber
+  }
+
+  return changedFields
+}
 
 const handleSubmit = () => {
   isRequestInProgress.value = true
   formRef.value
     ?.validate()
     .then(async () => {
-      const newUserData = {
-        id: route.params.id,
+      const normalizedFormState: Required<UserRequest> = {
         username: formState.username.trim(),
         email: formState.email.trim(),
         phoneNumber: formState.phoneNumber.trim(),
       }
 
-      const updaterUserData = await editUser(newUserData)
-      initialization(updaterUserData)
-      userData.value = updaterUserData
+      const changedUserData: UserRequestWithId = {
+        id: userId.value,
+        ...getChangedUserFields(normalizedFormState, initialFormState.value),
+      }
+
+      // Выход из функции если не было внесено изменений в форму редактирования.
+      if (Object.keys(changedUserData).length === 1) {
+        isEditMode.value = false
+        return
+      }
+
+      const updatedUserData = await editUser(changedUserData)
+      initialization(updatedUserData)
+      userData.value = updatedUserData
       isEditMode.value = false
 
       openNotificationWithIcon('success', 'Профиль успешно изменен')
@@ -60,7 +87,14 @@ const handleSubmit = () => {
 }
 
 const handleActivateEditMode = () => {
-  initialFormState.value = userData.value
+  if (userData.value) {
+    initialFormState.value = {
+      username: userData.value.username,
+      email: userData.value.email,
+      phoneNumber: userData.value.phoneNumber,
+    }
+  }
+
   isEditMode.value = true
 }
 
@@ -73,7 +107,11 @@ const handleCancelEditMode = () => {
 }
 
 const initialization = (userData: User): void => {
-  initialFormState.value = userData
+  initialFormState.value = {
+    username: userData.username,
+    email: userData.email,
+    phoneNumber: userData.phoneNumber,
+  }
 
   formState.username = userData.username
   formState.email = userData.email
@@ -81,10 +119,9 @@ const initialization = (userData: User): void => {
 }
 
 onMounted(async () => {
-  userData.value = await getUserById(route.params.id)
+  userData.value = await getUserById(userId.value)
 
   initialization(userData.value)
-  console.log('userData.value: ', userData.value)
 })
 </script>
 

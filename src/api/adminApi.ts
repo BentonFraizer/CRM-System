@@ -82,3 +82,15 @@ export const editUserRights = async (data: UserRolesRequest): Promise<User> => {
     }
   }
 }
+
+export const deleteUser = async (id: string): Promise<void> => {
+  try {
+    await axiosApi.delete(`/admin/users/${id}`)
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.request?.responseText
+    } else {
+      throw error
+    }
+  }
+}

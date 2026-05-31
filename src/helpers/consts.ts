@@ -28,6 +28,10 @@ export const USER_ROLES = { ADMIN: 'ADMIN', USER: 'USER', MODERATOR: 'MODERATOR'
 export const REFRESH_TOKEN_KEY = 'refresh_token'
 
 export const BASE_URL = 'https://easydev.club/api/v1'
+export const SORTING_ORDER = {
+  ASCEND: 'asc',
+  DESCEND: 'desc',
+}
 
 export const CREATE_EDIT_TASK_RULES: Record<string, Rule[]> = {
   title: [

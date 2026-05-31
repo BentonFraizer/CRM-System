@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, h } from 'vue'
+import { computed, onMounted, ref, h } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import type { Profile, Role } from '@/types/auth.ts'
-import type { TableProps } from 'ant-design-vue'
-import { blockUser, editUserRights, getAllUsers, unblockUser } from '@/api/adminApi.ts'
+import type { TableProps, SelectProps } from 'ant-design-vue'
+import { blockUser, deleteUser, editUserRights, getAllUsers, unblockUser } from '@/api/adminApi.ts'
 import { formatIsoDate, hasUserRole, openNotificationWithIcon } from '@/helpers/helpers.ts'
 import { useUserStore } from '@/stores/user.ts'
-import { USER_ROLES } from '@/helpers/consts.ts'
+import { SORTING_ORDER, USER_ROLES } from '@/helpers/consts.ts'
 import {
   ArrowRightOutlined,
   SearchOutlined,
@@ -14,6 +14,7 @@ import {
   MailOutlined,
   ExclamationCircleOutlined,
   MoreOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons-vue'
 import { Modal } from 'ant-design-vue'
 
@@ -22,6 +23,7 @@ const users = ref<Profile[]>()
 const isUserAdminOrModerator = ref<boolean>(false)
 const isUserAdmin = ref<boolean>(false)
 const searchValue = ref<string>('')
+const blockedUsersStatusFilter = ref<'all' | 'true' | 'false'>('all')
 const isLoading = ref<boolean>(true)
 
 const [modal, contextHolder] = Modal.useModal()
@@ -38,6 +40,7 @@ const pagination = ref({
   total: 0,
   pageSize: 20,
   current: 1,
+  size: 'medium',
   ...PAGINATION_SETTINGS,
 })
 
@@ -79,47 +82,64 @@ const columns = [
     key: 'date',
     dataIndex: 'date',
   },
-  // TODO: по завершении задачи подумать стоит ли вообще отображать столбец,
-  // для польз-ля не являющегося админом или же модератором.
-  // То есть если ни одной кнопки не будет, то и столбец не нужен
   {
     title: '',
     key: 'action',
   },
 ]
 
-const handleTableChange: TableProps['onChange'] = async (
+const blockedUsersOptions = ref<SelectProps['options']>([
+  {
+    value: 'all',
+    label: 'Все',
+  },
+  {
+    value: 'true',
+    label: 'Заблокированные',
+  },
+  {
+    value: 'false',
+    label: 'Разблокированные',
+  },
+])
+
+const isUsersBlockedFilter = computed<boolean | null>(() => {
+  if (blockedUsersStatusFilter.value === 'all') {
+    return null
+  }
+
+  return blockedUsersStatusFilter.value === 'true'
+})
+
+const handleTableChange: TableProps['onChange'] = (
   pag: { pageSize: number; current: number },
   filters: any,
-  sorter: any,
+  sorter: any, // Пример взят из документации https://antdv.com/components/table#components-table-demo-ajax. Указанные параметры в нем не типизированы.
 ) => {
-  console.log('pagination: ', pag)
-  console.log('filters: ', filters)
-  console.log('sorter ', sorter)
   pagination.value.current = pag.current
   pagination.value.pageSize = pag.pageSize
-  await getUsers()
+  sortingParams.value.sortBy = sorter.column?.key
+  sortingParams.value.sortOrder = SORTING_ORDER[sorter.order?.toUpperCase()]
 
-  // results: pag.pageSize,
-  // pagination.value.limit: pag?.current,
-  // sortField: sorter.field,
-  // sortOrder: sorter.order,
-  // ...filters,
+  getUsers()
 }
 
 const getUsers = async () => {
   isLoading.value = true
-  const response = await getAllUsers({
-    page: pagination.value.current - 1,
-    limit: pagination.value.pageSize,
-    sortBy: sortingParams.value.sortBy,
-    sortOrder: sortingParams.value.sortOrder,
-    search: searchValue.value,
-  }).finally(() => (isLoading.value = false))
-  users.value = response.data
-  pagination.value.total = response.meta.totalAmount
-
-  console.log('1. response: ', response)
+  try {
+    const response = await getAllUsers({
+      page: pagination.value.current - 1,
+      limit: pagination.value.pageSize,
+      sortBy: sortingParams.value.sortBy,
+      sortOrder: sortingParams.value.sortOrder,
+      search: searchValue.value,
+      isBlocked: isUsersBlockedFilter.value,
+    })
+    users.value = response.data
+    pagination.value.total = response.meta.totalAmount
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const handleToggleBlockedUserStatus = (id: string, isBlocked: boolean) => {
@@ -129,6 +149,7 @@ const handleToggleBlockedUserStatus = (id: string, isBlocked: boolean) => {
     title: modalText,
     icon: h(ExclamationCircleOutlined),
     cancelText: 'Отмена',
+    okText: modalText,
     content: `Вы действительно хотите ${modalText.toLocaleLowerCase()} пользователя?`,
     async onOk() {
       try {
@@ -166,12 +187,39 @@ const handleChangeUserRightsClickOkButton = async () => {
   }
 }
 
-onMounted(async () => {
-  await getUsers()
-  const userRoles = userStore.getUserProfileData.roles
-  isUserAdminOrModerator.value =
-    hasUserRole(userRoles, USER_ROLES.ADMIN) || hasUserRole(userRoles, USER_ROLES.MODERATOR)
-  isUserAdmin.value = hasUserRole(userRoles, USER_ROLES.ADMIN)
+const handleDeleteUser = (id: string) => {
+  modal.confirm({
+    title: 'Удалить',
+    icon: h(DeleteOutlined),
+    cancelText: 'Отмена',
+    okText: 'Удалить',
+    content: `Вы действительно хотите удалить пользователя?`,
+    async onOk() {
+      try {
+        await deleteUser(id)
+        await getUsers()
+        openNotificationWithIcon('success', 'Пользователь успешно удален')
+      } catch (error) {
+        openNotificationWithIcon('error', `Не удалось удалить пользователя`, error as string)
+      }
+    },
+    onCancel() {},
+  })
+}
+
+const handleBlockedUsersStatusFilterChange = () => {
+  getUsers()
+}
+
+onMounted(() => {
+  getUsers()
+  let userRoles = null
+  if (userStore.getUserProfileData !== null) {
+    userRoles = userStore.getUserProfileData.roles
+    isUserAdminOrModerator.value =
+      hasUserRole(userRoles, USER_ROLES.ADMIN) || hasUserRole(userRoles, USER_ROLES.MODERATOR)
+    isUserAdmin.value = hasUserRole(userRoles, USER_ROLES.ADMIN)
+  }
 })
 </script>
 
@@ -180,18 +228,31 @@ onMounted(async () => {
     <contextHolder />
     <div class="header">
       <h3>Пользователи</h3>
-      <a-input
-        class="search-input"
-        v-if="isUserAdminOrModerator"
-        v-model:value="searchValue"
-        placeholder="Введите имя или email"
-        @change="getUsers"
-        size="large"
-      >
-        <template #prefix>
-          <search-outlined class="search-icon" />
-        </template>
-      </a-input>
+
+      <div class="header-filters">
+        <a-input
+          class="search-input"
+          v-if="isUserAdminOrModerator"
+          v-model:value="searchValue"
+          placeholder="Введите имя или email"
+          @change="getUsers"
+          size="large"
+        >
+          <template #prefix>
+            <search-outlined class="search-icon" />
+          </template>
+        </a-input>
+
+        <a-select
+          v-if="isUserAdmin"
+          class="blocking-filter"
+          ref="select"
+          v-model:value="blockedUsersStatusFilter"
+          :options="blockedUsersOptions"
+          @change="handleBlockedUsersStatusFilterChange"
+          size="large"
+        />
+      </div>
     </div>
     <a-table
       :columns="columns"
@@ -278,6 +339,15 @@ onMounted(async () => {
               >
                 <a-button :icon="h(MoreOutlined)" />
               </a-tooltip>
+
+              <a-tooltip
+                title="Удалить пользователя"
+                placement="topLeft"
+                v-if="isUserAdmin"
+                @click="() => handleDeleteUser(record.id)"
+              >
+                <a-button :icon="h(DeleteOutlined)" />
+              </a-tooltip>
             </div>
           </div>
         </template>
@@ -288,6 +358,7 @@ onMounted(async () => {
       title="Выберите роли"
       @ok="handleChangeUserRightsClickOkButton"
       cancel-text="Отмена"
+      ok-text="Изменить"
     >
       <a-checkbox-group v-model:value="selectedUserRoles" style="width: 100%">
         <a-row>
@@ -321,8 +392,17 @@ onMounted(async () => {
   }
 }
 
+.header-filters {
+  display: flex;
+  gap: 10px;
+}
+
 .search-input {
-  max-width: 360px;
+  width: 360px;
+}
+
+.blocking-filter {
+  width: 200px;
 }
 
 .search-icon {
