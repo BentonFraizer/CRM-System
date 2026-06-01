@@ -1,5 +1,13 @@
 export type Role = 'ADMIN' | 'USER' | 'MODERATOR'
 
+export interface UserRegistration {
+  username: string
+  login: string
+  password: string
+  email: string
+  phoneNumber: string
+}
+
 export interface Profile {
   id: number
   username: string

@@ -1,5 +1,5 @@
 import type { User, UserFilters, UserRequestWithId, UserRolesRequest } from '@/types/user.ts'
-import type { UserMetaResponse } from '@/types/api.ts'
+import type { UserMetaResponse } from '@/types/tasksApi.ts'
 import type { Profile } from '@/types/auth.ts'
 import axiosApi from '@/api/axios.ts'
 import axios from 'axios'
