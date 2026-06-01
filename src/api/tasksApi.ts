@@ -1,5 +1,5 @@
 import { TASK_FILTERS } from '@/helpers/consts.ts'
-import type { CreateUpdateTaskResponse, MetaResponse, TaskRequest } from '@/types/api.ts'
+import type { CreateUpdateTaskResponse, MetaResponse, TaskRequest } from '@/types/tasksApi.ts'
 import type { Task, TaskInfo, TaskStatus } from '@/types/task.ts'
 import axiosApi from '@/api/axios.ts'
 

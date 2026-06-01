@@ -32,7 +32,7 @@ const items = reactive([
   {
     key: '/profile',
     icon: () => h(FolderTwoTone),
-    label: 'Профиль',
+    label: 'Личный кабинет',
     onClick: () => router.push('/profile'),
   },
   (isUserAdmin || isUserModerator) && {
