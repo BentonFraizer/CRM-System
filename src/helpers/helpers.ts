@@ -12,9 +12,14 @@ export const loadTasks = async (status: TaskStatus, errorMessage: string) => {
   }
 }
 
-export const openNotificationWithIcon = (type: NotificationTypes, message: string) => {
+export const openNotificationWithIcon = (
+  type: NotificationTypes,
+  message: string,
+  description?: string,
+) => {
   notification[type]({
     message: message,
+    description: description,
     placement: 'bottomLeft',
   })
 }
