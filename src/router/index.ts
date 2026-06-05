@@ -27,8 +27,20 @@ const router = createRouter({
     },
     { path: '/registration', component: RegistrationView },
     { path: '/login', component: AuthorizationView },
-    { path: '/users', component: UsersView },
-    { path: '/users/:id', component: UserProfileView },
+    {
+      path: '/users',
+      component: UsersView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/users/:id',
+      component: UserProfileView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
   ],
 })
 

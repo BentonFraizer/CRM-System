@@ -20,8 +20,12 @@ import { Modal } from 'ant-design-vue'
 
 const userStore = useUserStore()
 const users = ref<Profile[]>()
-const isUserAdminOrModerator = ref<boolean>(false)
-const isUserAdmin = ref<boolean>(false)
+const isUserAdminOrModerator = computed<boolean>(
+  () =>
+    hasUserRole(userStore.roles, USER_ROLES.ADMIN) ||
+    hasUserRole(userStore.roles, USER_ROLES.MODERATOR),
+)
+const isUserAdmin = computed<boolean>(() => hasUserRole(userStore.roles, USER_ROLES.ADMIN))
 const searchValue = ref<string>('')
 const blockedUsersStatusFilter = ref<'all' | 'true' | 'false'>('all')
 const isLoading = ref<boolean>(true)
@@ -213,13 +217,6 @@ const handleBlockedUsersStatusFilterChange = () => {
 
 onMounted(() => {
   getUsers()
-  let userRoles = null
-  if (userStore.getUserProfileData !== null) {
-    userRoles = userStore.getUserProfileData.roles
-    isUserAdminOrModerator.value =
-      hasUserRole(userRoles, USER_ROLES.ADMIN) || hasUserRole(userRoles, USER_ROLES.MODERATOR)
-    isUserAdmin.value = hasUserRole(userRoles, USER_ROLES.ADMIN)
-  }
 })
 </script>
 

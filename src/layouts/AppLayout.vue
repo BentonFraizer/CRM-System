@@ -8,14 +8,8 @@ import { hasUserRole } from '@/helpers/helpers.ts'
 import { USER_ROLES } from '@/helpers/consts.ts'
 
 const userStore = useUserStore()
-const userData = userStore.getUserProfileData
-
-let isUserAdmin = false
-let isUserModerator = false
-if (userData?.roles.length) {
-  isUserAdmin = hasUserRole(userData?.roles, USER_ROLES.ADMIN)
-  isUserModerator = hasUserRole(userData?.roles, USER_ROLES.MODERATOR)
-}
+const isUserAdmin = computed<boolean>(() => hasUserRole(userStore.roles, USER_ROLES.ADMIN))
+const isUserModerator = computed<boolean>(() => hasUserRole(userStore.roles, USER_ROLES.MODERATOR))
 
 const route = useRoute()
 const currentPath = computed(() => route.path)
@@ -35,7 +29,7 @@ const items = reactive([
     label: 'Личный кабинет',
     onClick: () => router.push('/profile'),
   },
-  (isUserAdmin || isUserModerator) && {
+  (isUserAdmin.value || isUserModerator.value) && {
     key: '/users',
     icon: () => h(IdcardTwoTone),
     label: 'Пользователи',
