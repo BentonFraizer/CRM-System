@@ -2,14 +2,13 @@
 import { reactive, ref, type UnwrapRef } from 'vue'
 import router from '@/router'
 import type { FormInstance } from 'ant-design-vue'
-import { useAuthStore } from '@/stores/auth.ts'
 import { useUserStore } from '@/stores/user.ts'
 import { AUTHORIZATION_FORM_RULES, REFRESH_TOKEN_KEY } from '@/helpers/consts.ts'
 import { openNotificationWithIcon } from '@/helpers/helpers.ts'
 import { login } from '@/api/authApi.ts'
 import { getUserProfileData } from '@/api/userApi.ts'
+import { auth } from '@/helpers/initAuth.ts'
 
-const authStore = useAuthStore()
 const userStore = useUserStore()
 
 interface FormAuthorizationState {
@@ -37,8 +36,8 @@ const handleSubmit = () => {
       }
 
       const tokens = await login(authUserData)
-      authStore.setAccessToken(tokens.accessToken)
-      authStore.setIsAuthorized(true)
+      auth.setAccessToken(tokens.accessToken)
+      auth.setIsAuthorized(true)
       localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
 
       const userProfileData = await getUserProfileData()

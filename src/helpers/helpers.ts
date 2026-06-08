@@ -36,3 +36,32 @@ export const formatIsoDate = (isoDate: string): string => {
     year: 'numeric',
   })
 }
+
+export class Auth {
+  #accessToken: string | null = null
+  #isAuthorized: boolean = false
+
+  geAccessToken() {
+    return this.#accessToken
+  }
+
+  setAccessToken(value: string) {
+    this.#accessToken = value
+  }
+
+  clearAccessToken() {
+    this.#accessToken = null
+  }
+
+  getIsAuthorized() {
+    return this.#isAuthorized
+  }
+
+  setIsAuthorized(value: boolean) {
+    this.#isAuthorized = value
+  }
+
+  resetIsAuthorized() {
+    this.#isAuthorized = false
+  }
+}
