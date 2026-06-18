@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { auth } from '@/helpers/initAuth.ts'
+import { authState } from '@/helpers/initAuth.ts'
 
 import TodoListView from '@/pages/TodoListView.vue'
 import ProfileView from '@/pages/ProfileView.vue'
@@ -45,7 +45,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const isAuthorized = auth.getIsAuthorized()
+  const isAuthorized = authState.getIsAuthorized()
 
   if (to.meta.requiresAuth && !isAuthorized) {
     return '/login'

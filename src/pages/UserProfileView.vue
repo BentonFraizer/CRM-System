@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { useRoute } from 'vue-router'
 import { onMounted, ref, reactive, type UnwrapRef } from 'vue'
-import type { User, UserRequest, UserRequestWithId } from '@/types/user.ts'
+import type { User, UserRequest } from '@/types/user.ts'
 import { editUser, getUserById } from '@/api/adminApi.ts'
 import type { FormInstance } from 'ant-design-vue'
 import { openNotificationWithIcon } from '@/helpers/helpers.ts'
@@ -62,18 +62,18 @@ const handleSubmit = () => {
         phoneNumber: formState.phoneNumber.trim(),
       }
 
-      const changedUserData: UserRequestWithId = {
-        id: userId.value,
-        ...getChangedUserFields(normalizedFormState, initialFormState.value),
-      }
+      const changedUserData: UserRequest = getChangedUserFields(
+        normalizedFormState,
+        initialFormState.value,
+      )
 
       // Выход из функции если не было внесено изменений в форму редактирования.
-      if (Object.keys(changedUserData).length === 1) {
+      if (Object.keys(changedUserData).length === 0) {
         isEditMode.value = false
         return
       }
 
-      const updatedUserData = await editUser(changedUserData)
+      const updatedUserData = await editUser(changedUserData, userId.value)
       initialization(updatedUserData)
       userData.value = updatedUserData
       isEditMode.value = false

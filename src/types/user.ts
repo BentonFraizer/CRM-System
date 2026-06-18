@@ -1,4 +1,4 @@
-import type { Role } from '@/types/auth.ts'
+import type { Roles } from '@/types/auth.ts'
 
 export interface UserFilters {
   search?: string
@@ -15,7 +15,7 @@ export interface User {
   email: string
   date: string // ISO date string
   isBlocked: boolean
-  roles: Role[]
+  roles: Roles[]
   phoneNumber: string
 }
 
@@ -25,11 +25,16 @@ export interface UserRequest {
   phoneNumber?: string
 }
 
-export interface UserRequestWithId extends UserRequest {
-  id: string
-}
-
 export interface UserRolesRequest {
   id: string
-  roles: Role[]
+  roles: Roles[]
+}
+
+export interface MetaResponse<T> {
+  data: T[]
+  meta: {
+    totalAmount: number
+    sortBy: string
+    sortOrder: 'asc' | 'desc'
+  }
 }

@@ -2,7 +2,7 @@ import axios, { type AxiosInstance } from 'axios'
 import { BASE_URL, REFRESH_TOKEN_KEY } from '@/helpers/consts.ts'
 import router from '@/router'
 import { useUserStore } from '@/stores/user.ts'
-import { auth } from '@/helpers/initAuth'
+import { authState } from '@/helpers/initAuth'
 
 const axiosApi: AxiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -16,7 +16,7 @@ const axiosApi: AxiosInstance = axios.create({
 export default axiosApi
 
 axiosApi.interceptors.request.use((config) => {
-  const accessToken = auth.geAccessToken()
+  const accessToken = authState.geAccessToken()
 
   if (accessToken) {
     config.headers.set('Authorization', `Bearer ${accessToken}`)
@@ -29,7 +29,7 @@ axiosApi.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       const userStore = useUserStore()
-      auth.clearAccessToken()
+      authState.clearAccessToken()
       userStore.setUserProfileData(null)
       localStorage.removeItem(REFRESH_TOKEN_KEY)
       await router.push('/login')

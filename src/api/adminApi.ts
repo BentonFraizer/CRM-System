@@ -1,10 +1,10 @@
-import type { User, UserFilters, UserRequestWithId, UserRolesRequest } from '@/types/user.ts'
-import type { UserMetaResponse } from '@/types/tasksApi.ts'
+import type { User, UserFilters, UserRequest, UserRolesRequest } from '@/types/user.ts'
+import type { MetaResponse } from '@/types/user.ts'
 import type { Profile } from '@/types/auth.ts'
 import axiosApi from '@/api/axios.ts'
 import axios from 'axios'
 
-export const getAllUsers = async (params: UserFilters): Promise<UserMetaResponse<Profile>> => {
+export const getAllUsers = async (params: UserFilters): Promise<MetaResponse<Profile>> => {
   try {
     const response = await axiosApi.get('/admin/users', { params })
 
@@ -24,11 +24,9 @@ export const getUserById = async (id: string): Promise<User> => {
   }
 }
 
-export const editUser = async (data: UserRequestWithId): Promise<User> => {
-  const { id, ...params } = data
-
+export const editUser = async (data: UserRequest, id: string): Promise<User> => {
   try {
-    const response = await axiosApi.put(`/admin/users/${id}`, params)
+    const response = await axiosApi.put(`/admin/users/${id}`, data)
 
     return response.data
   } catch (error) {

@@ -7,7 +7,7 @@ import { AUTHORIZATION_FORM_RULES, REFRESH_TOKEN_KEY } from '@/helpers/consts.ts
 import { openNotificationWithIcon } from '@/helpers/helpers.ts'
 import { login } from '@/api/authApi.ts'
 import { getUserProfileData } from '@/api/userApi.ts'
-import { auth } from '@/helpers/initAuth.ts'
+import { authState } from '@/helpers/initAuth.ts'
 
 const userStore = useUserStore()
 
@@ -36,8 +36,8 @@ const handleSubmit = () => {
       }
 
       const tokens = await login(authUserData)
-      auth.setAccessToken(tokens.accessToken)
-      auth.setIsAuthorized(true)
+      authState.setAccessToken(tokens.accessToken)
+      authState.setIsAuthorized(true)
       localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken)
 
       const userProfileData = await getUserProfileData()

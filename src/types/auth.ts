@@ -1,4 +1,8 @@
-export type Role = 'ADMIN' | 'USER' | 'MODERATOR'
+export enum Roles {
+  ADMIN = 'ADMIN',
+  MODERATOR = 'MODERATOR',
+  USER = 'USER',
+}
 
 export interface UserRegistration {
   username: string
@@ -14,7 +18,7 @@ export interface Profile {
   email: string
   date: string
   isBlocked: boolean
-  roles: Role[]
+  roles: Roles[]
   phoneNumber: string
 }
 

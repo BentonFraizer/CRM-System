@@ -5,15 +5,15 @@ import router from '@/router'
 import { openNotificationWithIcon } from '@/helpers/helpers.ts'
 import { useUserStore } from '@/stores/user.ts'
 import { REFRESH_TOKEN_KEY } from '@/helpers/consts.ts'
-import { auth } from '@/helpers/initAuth.ts'
+import { authState } from '@/helpers/initAuth.ts'
 
 const userStore = useUserStore()
 
 const handleLogout = async () => {
   try {
     await logout()
-    auth.clearAccessToken()
-    auth.resetIsAuthorized()
+    authState.clearAccessToken()
+    authState.resetIsAuthorized()
     userStore.setUserProfileData(null)
     localStorage.removeItem(REFRESH_TOKEN_KEY)
     await router.push('/login')
