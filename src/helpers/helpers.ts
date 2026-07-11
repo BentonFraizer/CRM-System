@@ -2,7 +2,6 @@ import { getTasks } from '@/api/tasksApi.ts'
 import type { TaskStatus } from '@/types/task.ts'
 import { notification } from 'ant-design-vue'
 import type { NotificationTypes } from '@/types/notification.ts'
-import type { Roles } from '@/types/auth.ts'
 
 export const loadTasks = async (status: TaskStatus, errorMessage: string) => {
   try {
@@ -25,9 +24,8 @@ export const openNotificationWithIcon = (
   })
 }
 
-export const hasUserRole = (currenUserRoles: Roles[], roleToCheck: Roles) => {
-  return currenUserRoles.includes(roleToCheck)
-}
+export const hasUserRoles = <T>(currenUserRoles: T[], roleToCheck: T[]) =>
+  roleToCheck.some((role) => currenUserRoles.includes(role))
 
 export const formatIsoDate = (isoDate: string): string => {
   return new Date(isoDate).toLocaleString('ru-RU', {

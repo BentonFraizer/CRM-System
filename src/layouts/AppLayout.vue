@@ -4,12 +4,13 @@ import { FolderTwoTone, HomeTwoTone, IdcardTwoTone } from '@ant-design/icons-vue
 import { useRoute } from 'vue-router'
 import router from '@/router'
 import { useUserStore } from '@/stores/user.ts'
-import { hasUserRole } from '@/helpers/helpers.ts'
-import { USER_ROLES } from '@/helpers/consts.ts'
+import { hasUserRoles } from '@/helpers/helpers.ts'
+import { Roles } from '@/types/auth.ts'
 
 const userStore = useUserStore()
-const isUserAdmin = computed<boolean>(() => hasUserRole(userStore.roles, USER_ROLES.ADMIN))
-const isUserModerator = computed<boolean>(() => hasUserRole(userStore.roles, USER_ROLES.MODERATOR))
+const isUserAdminOrModerator = computed<boolean>(() =>
+  hasUserRoles(userStore.roles, [Roles.ADMIN, Roles.MODERATOR]),
+)
 
 const route = useRoute()
 const currentPath = computed(() => route.path)
@@ -29,7 +30,7 @@ const items = reactive([
     label: 'Личный кабинет',
     onClick: () => router.push('/profile'),
   },
-  (isUserAdmin.value || isUserModerator.value) && {
+  isUserAdminOrModerator.value && {
     key: '/users',
     icon: () => h(IdcardTwoTone),
     label: 'Пользователи',
