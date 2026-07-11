@@ -30,22 +30,13 @@ const formState: UnwrapRef<Required<UserRequest>> = reactive({
 })
 
 // Функция для проверки наличия измененных полей в форме
-const getChangedUserFields = (
-  currentData: Required<UserRequest>,
-  initialData: Required<UserRequest>,
-): UserRequest => {
-  const changedFields: UserRequest = {}
+const getChangedUserFields = <T extends object>(currentData: T, initialData: T): Partial<T> => {
+  const changedFields: Partial<T> = {}
 
-  if (currentData.username !== initialData.username) {
-    changedFields.username = currentData.username
-  }
-
-  if (currentData.email !== initialData.email) {
-    changedFields.email = currentData.email
-  }
-
-  if (currentData.phoneNumber !== initialData.phoneNumber) {
-    changedFields.phoneNumber = currentData.phoneNumber
+  for (const key of Object.keys(currentData) as Array<keyof T>) {
+    if (currentData[key] !== initialData[key]) {
+      changedFields[key] = currentData[key]
+    }
   }
 
   return changedFields
@@ -66,12 +57,6 @@ const handleSubmit = () => {
         normalizedFormState,
         initialFormState.value,
       )
-
-      // Выход из функции если не было внесено изменений в форму редактирования.
-      if (Object.keys(changedUserData).length === 0) {
-        isEditMode.value = false
-        return
-      }
 
       const updatedUserData = await editUser(changedUserData, userId.value)
       initialization(updatedUserData)

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, h } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
-import type { Profile, Role } from '@/types/auth.ts'
+import type { Profile } from '@/types/auth.ts'
+import { Roles } from '@/types/auth.ts'
 import type { TableProps, SelectProps } from 'ant-design-vue'
 import { blockUser, deleteUser, editUserRights, getAllUsers, unblockUser } from '@/api/adminApi.ts'
-import { formatIsoDate, hasUserRole, openNotificationWithIcon } from '@/helpers/helpers.ts'
+import { formatIsoDate, hasUserRoles, openNotificationWithIcon } from '@/helpers/helpers.ts'
 import { useUserStore } from '@/stores/user.ts'
-import { SORTING_ORDER, USER_ROLES } from '@/helpers/consts.ts'
+import { SORTING_ORDER } from '@/helpers/consts.ts'
 import {
   ArrowRightOutlined,
   SearchOutlined,
@@ -20,20 +21,18 @@ import { Modal } from 'ant-design-vue'
 
 const userStore = useUserStore()
 const users = ref<Profile[]>()
-const isUserAdminOrModerator = computed<boolean>(
-  () =>
-    hasUserRole(userStore.roles, USER_ROLES.ADMIN) ||
-    hasUserRole(userStore.roles, USER_ROLES.MODERATOR),
+const isUserAdminOrModerator = computed<boolean>(() =>
+  hasUserRoles(userStore.roles, [Roles.ADMIN, Roles.MODERATOR]),
 )
-const isUserAdmin = computed<boolean>(() => hasUserRole(userStore.roles, USER_ROLES.ADMIN))
+const isUserAdmin = computed<boolean>(() => hasUserRoles(userStore.roles, [Roles.ADMIN]))
 const searchValue = ref<string>('')
-const blockedUsersStatusFilter = ref<'all' | 'true' | 'false'>('all')
+const blockedUsersStatusFilter = ref<'all' | 'blocked' | 'unblocked'>('all')
 const isLoading = ref<boolean>(true)
 
 const [modal, contextHolder] = Modal.useModal()
 const isChangeUserRightsModalOpen = ref<boolean>(false)
 const selectedUserId = ref<string>('')
-const selectedUserRoles = ref<Role[]>([])
+const selectedUserRoles = ref<Roles[]>([])
 
 const PAGINATION_SETTINGS = {
   showSizeChanger: false,
@@ -43,9 +42,20 @@ const PAGINATION_SETTINGS = {
 const pagination = ref({
   total: 0,
   pageSize: 20,
-  current: 1,
+  current: 0,
   size: 'medium',
   ...PAGINATION_SETTINGS,
+})
+
+const tablePagination = computed(() => {
+  if (!isUserAdminOrModerator.value) {
+    return false
+  }
+
+  return {
+    ...pagination.value,
+    current: pagination.value.current + 1,
+  }
 })
 
 const sortingParams = ref<{ sortBy: string; sortOrder: 'asc' | 'desc' }>({
@@ -98,11 +108,11 @@ const blockedUsersOptions = ref<SelectProps['options']>([
     label: 'Все',
   },
   {
-    value: 'true',
+    value: 'blocked',
     label: 'Заблокированные',
   },
   {
-    value: 'false',
+    value: 'unblocked',
     label: 'Разблокированные',
   },
 ])
@@ -112,7 +122,7 @@ const isUsersBlockedFilter = computed<boolean | null>(() => {
     return null
   }
 
-  return blockedUsersStatusFilter.value === 'true'
+  return blockedUsersStatusFilter.value === 'blocked'
 })
 
 const handleTableChange: TableProps['onChange'] = (
@@ -120,7 +130,7 @@ const handleTableChange: TableProps['onChange'] = (
   filters: any,
   sorter: any, // Пример взят из документации https://antdv.com/components/table#components-table-demo-ajax. Указанные параметры в нем не типизированы.
 ) => {
-  pagination.value.current = pag.current
+  pagination.value.current = pag.current - 1
   pagination.value.pageSize = pag.pageSize
   sortingParams.value.sortBy = sorter.column?.key
   sortingParams.value.sortOrder = SORTING_ORDER[sorter.order?.toUpperCase()]
@@ -132,7 +142,7 @@ const getUsers = async () => {
   isLoading.value = true
   try {
     const response = await getAllUsers({
-      page: pagination.value.current - 1,
+      page: pagination.value.current,
       limit: pagination.value.pageSize,
       sortBy: sortingParams.value.sortBy,
       sortOrder: sortingParams.value.sortOrder,
@@ -173,7 +183,7 @@ const handleToggleBlockedUserStatus = (id: string, isBlocked: boolean) => {
   })
 }
 
-const openChangeUserRightsModal = (id: string, roles: Role[]) => {
+const openChangeUserRightsModal = (id: string, roles: Roles[]) => {
   selectedUserId.value = id
   selectedUserRoles.value = roles
   isChangeUserRightsModalOpen.value = true
@@ -255,7 +265,7 @@ onMounted(() => {
       :columns="columns"
       :row-key="(record) => record.id"
       :data-source="users"
-      :pagination="isUserAdminOrModerator && pagination"
+      :pagination="tablePagination"
       :loading="isLoading"
       @change="handleTableChange"
       size="middle"
@@ -283,11 +293,7 @@ onMounted(() => {
               v-for="role in record.roles"
               :key="role"
               :color="
-                role === USER_ROLES.ADMIN
-                  ? 'green'
-                  : role === USER_ROLES.MODERATOR
-                    ? 'blue'
-                    : 'volcano'
+                role === Roles.ADMIN ? 'green' : role === Roles.MODERATOR ? 'blue' : 'volcano'
               "
             >
               {{ role }}
