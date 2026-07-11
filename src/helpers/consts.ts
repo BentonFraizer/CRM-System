@@ -6,14 +6,13 @@ const MAX_TITLE_LENGTH = 64
 const MIN_USERNAME_LENGTH = 1
 const MIN_LOGIN_LENGTH = 2
 const MIN_PASSWORD_LENGTH = 6
-const MAX_REG_FORM_FIELDS_LENGTH = 60
+const MAX_FORM_FIELDS_LENGTH = 60
+
 const USERNAME_PATTERN = /^[a-zA-Zа-яА-ЯёЁ]+$/
 const LOGIN_PATTERN = /^[a-zA-Z]+$/
 const PASSWORD_PATTERN = /^\S+$/
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PHONE_PATTERN = /^\+?[0-9]{11}$/
-
-export const REFRESH_TOKEN_KEY = 'refresh_token'
 
 export const TASK_FILTERS = {
   all: {
@@ -30,7 +29,14 @@ export const TASK_FILTERS = {
   },
 } as const
 
+export const USER_ROLES = { ADMIN: 'ADMIN', USER: 'USER', MODERATOR: 'MODERATOR' } as const
+export const REFRESH_TOKEN_KEY = 'refresh_token'
+
 export const BASE_URL = 'https://easydev.club/api/v1'
+export const SORTING_ORDER = {
+  ASCEND: 'asc',
+  DESCEND: 'desc',
+}
 
 export const CREATE_EDIT_TASK_RULES: Record<string, Rule[]> = {
   title: [
@@ -65,7 +71,7 @@ export const REGISTRATION_FORM_RULES: Record<string, Rule[]> = {
       trigger: 'blur',
     },
     {
-      max: MAX_REG_FORM_FIELDS_LENGTH,
+      max: MAX_FORM_FIELDS_LENGTH,
       message: 'Максимальная длина текста 60 символов',
       trigger: 'blur',
     },
@@ -87,7 +93,7 @@ export const REGISTRATION_FORM_RULES: Record<string, Rule[]> = {
       trigger: 'blur',
     },
     {
-      max: MAX_REG_FORM_FIELDS_LENGTH,
+      max: MAX_FORM_FIELDS_LENGTH,
       message: 'Максимальная длина текста 60 символов',
       trigger: 'blur',
     },
@@ -109,7 +115,7 @@ export const REGISTRATION_FORM_RULES: Record<string, Rule[]> = {
       trigger: 'blur',
     },
     {
-      max: MAX_REG_FORM_FIELDS_LENGTH,
+      max: MAX_FORM_FIELDS_LENGTH,
       message: 'Максимальная длина текста 60 символов',
       trigger: 'blur',
     },
@@ -147,6 +153,50 @@ export const AUTHORIZATION_FORM_RULES: Record<string, Rule[]> = {
     {
       required: true,
       message: EMPTY_FIELD_ERROR_TEXT,
+      trigger: 'blur',
+    },
+  ],
+}
+
+export const EDIT_USER_PROFILE_FORM_RULES: Record<string, Rule[]> = {
+  username: [
+    {
+      required: true,
+      message: EMPTY_FIELD_ERROR_TEXT,
+      trigger: 'change',
+    },
+    {
+      pattern: USERNAME_PATTERN,
+      message: 'Можно использовать только русские или латинские буквы (без пробелов)',
+      trigger: 'change',
+    },
+    {
+      min: MIN_USERNAME_LENGTH,
+      message: 'Минимальная длина текста 1 символ',
+      trigger: 'blur',
+    },
+    {
+      max: MAX_FORM_FIELDS_LENGTH,
+      message: 'Максимальная длина текста 60 символов',
+      trigger: 'blur',
+    },
+  ],
+  email: [
+    {
+      required: true,
+      message: EMPTY_FIELD_ERROR_TEXT,
+      trigger: 'change',
+    },
+    {
+      pattern: EMAIL_PATTERN,
+      message: 'Введите валидный email',
+      trigger: 'blur',
+    },
+  ],
+  phoneNumber: [
+    {
+      pattern: PHONE_PATTERN,
+      message: 'Введите номер телефона в формате +79998887766',
       trigger: 'blur',
     },
   ],

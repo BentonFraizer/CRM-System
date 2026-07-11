@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { authState } from '@/helpers/initAuth.ts'
 
 import TodoListView from '@/pages/TodoListView.vue'
 import ProfileView from '@/pages/ProfileView.vue'
 import RegistrationView from '@/pages/RegistrationView.vue'
 import AuthorizationView from '@/pages/AuthorizationView.vue'
-import { useAuthStore } from '@/stores/auth.ts'
+import UsersView from '@/pages/UsersView.vue'
+import UserProfileView from '@/pages/UserProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,12 +27,25 @@ const router = createRouter({
     },
     { path: '/registration', component: RegistrationView },
     { path: '/login', component: AuthorizationView },
+    {
+      path: '/users',
+      component: UsersView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/users/:id',
+      component: UserProfileView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
   ],
 })
 
 router.beforeEach((to) => {
-  const authStore = useAuthStore()
-  const isAuthorized = authStore.getIsAuthorized
+  const isAuthorized = authState.getIsAuthorized()
 
   if (to.meta.requiresAuth && !isAuthorized) {
     return '/login'

@@ -1,4 +1,4 @@
-import type { Profile, UserRegistration, AuthData, Token, RefreshToken } from '@/types/authApi.ts'
+import type { Profile, UserRegistration, AuthData, Token, RefreshToken } from '@/types/auth.ts'
 import axiosApi from '@/api/axios.ts'
 import axios from 'axios'
 
